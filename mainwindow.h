@@ -4,6 +4,9 @@
 #include <QMainWindow>
 #include <QEvent>
 #include <QFile>
+#include <QSortFilterProxyModel>
+#include <QJsonArray>
+#include <QJsonObject>
 
 #include "datamodel.h"
 #include "tablemodel.h"
@@ -26,11 +29,13 @@ public:
 
     void editOrder(const QModelIndex &index);
 
+    QVariant value(int row, int column) const;
+
 protected:
 
 private:
     Ui::MainWindow *ui;
-
-
+    tableModel * model;
+    QSortFilterProxyModel *proxyModel;
 };
 #endif // MAINWINDOW_H
