@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
       proxyModel(Q_NULLPTR)
 {
     ui->setupUi(this);
-    setWindowTitle("Планировщик заказов");
+    setWindowTitle("Планировщик заказов Alpha 0.2.1");
 
     model = new tableModel(this);
     proxyModel = new QSortFilterProxyModel(this);
@@ -29,8 +29,8 @@ MainWindow::MainWindow(QWidget *parent)
        addNewOrder();
     });
 
-    ui->btnEdit->connect(ui->btnEdit, &QPushButton::clicked, [=]() {
-
+    ui->btnEdit->connect(ui->btnEdit, &QPushButton::clicked, [this]() {
+        editOrder(ui->tableView->currentIndex());
     });
 
     ui->btnDel->connect(ui->btnDel, &QPushButton::clicked, [=]() {
@@ -52,6 +52,15 @@ MainWindow::MainWindow(QWidget *parent)
                     if(r == QMessageBox::Yes ){
                         model->remove(ui->tableView->currentIndex());
                     }
+    });
+
+    ui->searchEdit->connect(ui->searchEdit, &QLineEdit::textChanged, [=]() {
+        if (ui->nameRadioBtn->isChecked())
+            proxyModel->setFilterKeyColumn(0);
+        else if (ui->phoneRadioBtn->isChecked())
+            proxyModel->setFilterKeyColumn(1);
+
+        proxyModel->setFilterWildcard(ui->searchEdit->text());
     });
 
 }
@@ -76,7 +85,7 @@ void MainWindow::addNewOrder()
 
         QString name = formUi->nameEdit->text();
         QString phone = formUi->phoneEdit->text();
-        QString product = formUi->phoneEdit->text();
+        QString product = formUi->productEdit->text();
         QString desc = formUi->orderDesc->toPlainText();
         QString date = formUi->dateEdit->text();
 
@@ -97,7 +106,38 @@ void MainWindow::addNewOrder()
 
 void MainWindow::editOrder(const QModelIndex &index)
 {
+    Ui::formEdit* formUi = new Ui::formEdit;
+    QDialog* form = new QDialog();
+    formUi->setupUi(form);
+    form->setWindowTitle("Редактирование");
+    formUi->editBtn->setText("Изменить");
 
+    formUi->nameEdit->setText(model->index(ui->tableView->currentIndex().row(), 0, ui->tableView->currentIndex()).data().toString());
+    formUi->phoneEdit->setText(model->index(ui->tableView->currentIndex().row(), 1, ui->tableView->currentIndex()).data().toString());
+    formUi->productEdit->setText(model->index(ui->tableView->currentIndex().row(), 2, ui->tableView->currentIndex()).data().toString());
+    formUi->orderDesc->setText(model->index(ui->tableView->currentIndex().row(), 3, ui->tableView->currentIndex()).data().toString());
+    formUi->dateEdit->setDate(model->index(ui->tableView->currentIndex().row(), 4, ui->tableView->currentIndex()).data().toDate());
+
+    formUi->editBtn->connect(formUi->editBtn, &QPushButton::clicked, [this, form, formUi, index]() {
+
+        QString name = formUi->nameEdit->text();
+        QString phone = formUi->phoneEdit->text();
+        QString product = formUi->productEdit->text();
+        QString desc = formUi->orderDesc->toPlainText();
+        QString date = formUi->dateEdit->text();
+
+        model->update(index, dataModel(name, phone, product, desc, date));
+
+        form->accept();
+    });
+
+    formUi->canselBtn->connect(formUi->canselBtn, &QPushButton::clicked, [=]() {
+        form->reject();
+    });
+
+    form->exec();
+    delete formUi;
+    form->deleteLater();
 }
 
 
