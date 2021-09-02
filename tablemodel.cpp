@@ -22,7 +22,13 @@ int tableModel::rowCount(const QModelIndex &parent) const
 int tableModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    return 5;
+    return m_column;
+}
+
+int tableModel::setColumnCount(const int &column)
+{
+    m_column = column;
+    return m_column;
 }
 
 QVariant tableModel::data(const QModelIndex &index, int role) const

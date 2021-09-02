@@ -6,6 +6,10 @@
 #include <QAbstractItemModel>
 #include <QTableView>
 #include <QMessageBox>
+#include <QCloseEvent>
+#include <QApplication>
+
+const QString MainWindow::fileName("ordersData.json");
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -17,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("Планировщик заказов Alpha 0.2.1");
 
     model = new tableModel(this);
+    model->setColumnCount(5);
     proxyModel = new QSortFilterProxyModel(this);
 
     proxyModel->setSourceModel(model);
@@ -33,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
         editOrder(ui->tableView->currentIndex());
     });
 
-    ui->btnDel->connect(ui->btnDel, &QPushButton::clicked, [=]() {
+    ui->btnDel->connect(ui->btnDel, &QPushButton::clicked, [this]() {
         if(!ui->tableView->currentIndex().isValid()) return;
 
         QString data = model->index(ui->tableView->currentIndex().row(), 0, ui->tableView->currentIndex()).data().toString();
@@ -63,6 +68,13 @@ MainWindow::MainWindow(QWidget *parent)
         proxyModel->setFilterWildcard(ui->searchEdit->text());
     });
 
+    ui->tableView->connect(ui->tableView, &QTableView::clicked, [=]() {
+        qDebug() << ui->tableView->currentIndex();
+    });
+
+    ui->action->connect(ui->action, &QAction::triggered, [=]() {
+        saveToFile();
+    });
 }
 
 MainWindow::~MainWindow()
@@ -106,11 +118,13 @@ void MainWindow::addNewOrder()
 
 void MainWindow::editOrder(const QModelIndex &index)
 {
+    if(!index.isValid()) return;
     Ui::formEdit* formUi = new Ui::formEdit;
     QDialog* form = new QDialog();
     formUi->setupUi(form);
     form->setWindowTitle("Редактирование");
     formUi->editBtn->setText("Изменить");
+    formUi->dateEdit->setDateTime(QDateTime::currentDateTime());
 
     formUi->nameEdit->setText(model->index(ui->tableView->currentIndex().row(), 0, ui->tableView->currentIndex()).data().toString());
     formUi->phoneEdit->setText(model->index(ui->tableView->currentIndex().row(), 1, ui->tableView->currentIndex()).data().toString());
@@ -138,6 +152,56 @@ void MainWindow::editOrder(const QModelIndex &index)
     form->exec();
     delete formUi;
     form->deleteLater();
+}
+
+void MainWindow::saveToFile()
+{
+    QFile saveFile(fileName);
+        if (!saveFile.open(QIODevice::WriteOnly)) {
+            qWarning("Couldn't open save file.");
+            return;
+        }
+
+        QJsonObject json;
+        json["rowCount"] = model->rowCount(ui->tableView->currentIndex());
+        json["columnCount"] = 5;
+
+        QJsonArray data;
+        for (int i = 0; i < model->rowCount(ui->tableView->currentIndex()); i++) {
+            QJsonArray row;
+
+            for (int j = 0; j < 5; j++) {
+                row.append(QJsonValue(QString(model->index(i, j, ui->tableView->currentIndex()).data().toString())));
+            }
+
+            data.append(row);
+        }
+        json["data"] = data;
+
+        QJsonDocument saveDoc(json);
+        saveFile.write(saveDoc.toJson());
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    QMessageBox msgBox(
+        QMessageBox::Question,
+        QString::fromUtf8("Завершение работы"),
+        QString::fromUtf8("Выход из приложения"),
+        QMessageBox::Yes | QMessageBox::No
+    );
+    msgBox.setButtonText(QMessageBox::Yes, ("Выйти"));
+    msgBox.setButtonText(QMessageBox::No, ("Отмена"));
+    msgBox.setDefaultButton(QMessageBox::No);
+    msgBox.setIcon(QMessageBox::Question);
+    int r = msgBox.exec();
+    if(r == QMessageBox::No )
+    {
+        event->ignore();
+        return;
+    }
+    qApp->processEvents(QEventLoop::AllEvents, 5000);
+    event->accept();
 }
 
 

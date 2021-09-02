@@ -5,8 +5,9 @@
 #include <QEvent>
 #include <QFile>
 #include <QSortFilterProxyModel>
-#include <QJsonArray>
 #include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonDocument>
 
 #include "datamodel.h"
 #include "tablemodel.h"
@@ -29,13 +30,17 @@ public:
 
     void editOrder(const QModelIndex &index);
 
-    QVariant value(int row, int column) const;
+    void saveToFile();
 
 protected:
 
 private:
     Ui::MainWindow *ui;
     tableModel * model;
+    QJsonObject newObj;
     QSortFilterProxyModel *proxyModel;
+    void closeEvent(QCloseEvent *event);
+    QList<dataModel> values;
+    static const QString fileName;
 };
 #endif // MAINWINDOW_H

@@ -18,6 +18,7 @@ public:
 
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
+    int setColumnCount(const int &column);
     QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     void add(dataModel value);
@@ -26,6 +27,7 @@ public:
     
 private:
     QList<dataModel> values;
+    int m_column = 0;
 };
 
 

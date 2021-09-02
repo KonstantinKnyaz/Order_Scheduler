@@ -117,6 +117,7 @@
     <property name="title">
      <string>Меню</string>
     </property>
+    <addaction name="action"/>
     <addaction name="info"/>
     <addaction name="action_3"/>
    </widget>
@@ -130,6 +131,11 @@
   <action name="info">
    <property name="text">
     <string>Инфо</string>
+   </property>
+  </action>
+  <action name="action">
+   <property name="text">
+    <string>Сохранить</string>
    </property>
   </action>
  </widget>
