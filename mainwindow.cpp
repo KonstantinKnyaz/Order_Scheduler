@@ -18,9 +18,10 @@ MainWindow::MainWindow(QWidget *parent)
       proxyModel(Q_NULLPTR)
 {
     ui->setupUi(this);
-    setWindowTitle("Планировщик заказов Alpha 0.2.1");
+    setWindowTitle("Планировщик заказов Alpha 0.9.1");
 
     model = new tableModel(this);
+    //model->setRowCount(values.count());
     model->setColumnCount(5);
     proxyModel = new QSortFilterProxyModel(this);
 
@@ -30,8 +31,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
 
+    loadFile();
+
     ui->btnAdd->connect(ui->btnAdd, &QPushButton::clicked, [this]() {
-       addNewOrder();
+       addNewOrder(); 
     });
 
     ui->btnEdit->connect(ui->btnEdit, &QPushButton::clicked, [this]() {
@@ -70,10 +73,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->tableView->connect(ui->tableView, &QTableView::clicked, [=]() {
         qDebug() << ui->tableView->currentIndex();
-    });
-
-    ui->action->connect(ui->action, &QAction::triggered, [=]() {
-        saveToFile();
     });
 }
 
@@ -162,24 +161,48 @@ void MainWindow::saveToFile()
             return;
         }
 
-        QJsonObject json;
-        json["rowCount"] = model->rowCount(ui->tableView->currentIndex());
-        json["columnCount"] = 5;
-
-        QJsonArray data;
-        for (int i = 0; i < model->rowCount(ui->tableView->currentIndex()); i++) {
-            QJsonArray row;
-
-            for (int j = 0; j < 5; j++) {
-                row.append(QJsonValue(QString(model->index(i, j, ui->tableView->currentIndex()).data().toString())));
-            }
-
-            data.append(row);
+        QJsonObject textObject;
+        for (int i = 0; i < model->values.count(); i++) {
+        textObject["name"] = model->index(i,0,ui->tableView->currentIndex()).data().toString();
+        textObject["phone"] = model->index(i,1,ui->tableView->currentIndex()).data().toString();
+        textObject["order"] = model->index(i,2,ui->tableView->currentIndex()).data().toString();
+        textObject["desc"] = model->index(i,3,ui->tableView->currentIndex()).data().toString();
+        textObject["date"] = model->index(i,4,ui->tableView->currentIndex()).data().toString();
+        QJsonArray textsArray = m_currentJsonObject["data"].toArray();
+        textsArray.append(textObject);
+        m_currentJsonObject["data"] = textsArray;
         }
-        json["data"] = data;
 
-        QJsonDocument saveDoc(json);
-        saveFile.write(saveDoc.toJson());
+        saveFile.write(QJsonDocument(m_currentJsonObject).toJson(QJsonDocument::Indented));
+        saveFile.close();
+}
+
+void MainWindow::loadFile()
+{
+    QFile loadFile(fileName);
+        if (!loadFile.open(QIODevice::ReadOnly)) {
+            qWarning("Couldn't open save file.");
+            return;
+        }
+
+    QByteArray saveData = loadFile.readAll();
+    QJsonDocument jsnDoc(QJsonDocument::fromJson(saveData));
+    QJsonObject root = jsnDoc.object();
+    qDebug() << root.keys().at(0);
+    QJsonValue jv = root.value("data");
+    if(jv.isArray()) {
+        QJsonArray js = jv.toArray();
+        for(int i = 0; i < js.count(); i++) {
+            QJsonObject subtree = js.at(i).toObject();
+            QString name = subtree.value("name").toString();
+            QString phone = subtree.value("phone").toString();
+            QString order = subtree.value("order").toString();
+            QString desk = subtree.value("desc").toString();
+            QString date = subtree.value("date").toString();
+            model->add(dataModel(name, phone, order, desk, date));
+        }
+    }
+   // qDebug() << m_currentJsonObject;
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -199,9 +222,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
     {
         event->ignore();
         return;
+    } else if (r == QMessageBox::Yes) {
+        saveToFile();
+        qApp->processEvents(QEventLoop::AllEvents, 5000);
+        event->accept();
     }
-    qApp->processEvents(QEventLoop::AllEvents, 5000);
-    event->accept();
 }
 
 

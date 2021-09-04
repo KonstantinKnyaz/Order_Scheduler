@@ -17,16 +17,18 @@ public:
     ~tableModel();
 
     int rowCount(const QModelIndex &parent) const;
+    void setRowCount(const int &row);
     int columnCount(const QModelIndex &parent) const;
-    int setColumnCount(const int &column);
+    void setColumnCount(const int &column);
     QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     void add(dataModel value);
     void update(const QModelIndex &index, dataModel value);
     void remove(const QModelIndex &index);
+    QList<dataModel> values;
     
 private:
-    QList<dataModel> values;
+    int m_row = 0;
     int m_column = 0;
 };
 

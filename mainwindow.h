@@ -8,6 +8,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QJsonValue>
 
 #include "datamodel.h"
 #include "tablemodel.h"
@@ -32,15 +33,16 @@ public:
 
     void saveToFile();
 
+    void loadFile();
+
 protected:
 
 private:
     Ui::MainWindow *ui;
     tableModel * model;
-    QJsonObject newObj;
     QSortFilterProxyModel *proxyModel;
     void closeEvent(QCloseEvent *event);
-    QList<dataModel> values;
     static const QString fileName;
+    QJsonObject m_currentJsonObject;
 };
 #endif // MAINWINDOW_H

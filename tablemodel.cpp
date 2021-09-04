@@ -19,16 +19,20 @@ int tableModel::rowCount(const QModelIndex &parent) const
     return values.count();
 }
 
+void tableModel::setRowCount(const int &row)
+{
+    m_row = row;
+}
+
 int tableModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
     return m_column;
 }
 
-int tableModel::setColumnCount(const int &column)
+void tableModel::setColumnCount(const int &column)
 {
     m_column = column;
-    return m_column;
 }
 
 QVariant tableModel::data(const QModelIndex &index, int role) const
