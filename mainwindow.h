@@ -9,6 +9,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonValue>
+#include <QFrame>
 
 #include "datamodel.h"
 #include "tablemodel.h"
@@ -38,6 +39,10 @@ public:
 
     void lastDays();
 
+    void getAbout();
+
+    bool eventFilter(QObject *watched, QEvent *event) override;
+
 protected:
 
 private:
@@ -47,5 +52,7 @@ private:
     void closeEvent(QCloseEvent *event);
     static const QString fileName;
     QJsonObject m_currentJsonObject;
+    QFrame *m_about;
+    bool aboutFlag;
 };
 #endif // MAINWINDOW_H

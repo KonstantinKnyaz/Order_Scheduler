@@ -9,6 +9,8 @@
 #include <QCloseEvent>
 #include <QApplication>
 #include <QRegularExpressionValidator>
+#include <QApplication>
+#include <QScreen>
 
 const QString MainWindow::fileName("ordersData.json");
 
@@ -16,10 +18,12 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow),
       model(Q_NULLPTR),
-      proxyModel(Q_NULLPTR)
+      proxyModel(Q_NULLPTR),
+      m_about(Q_NULLPTR),
+      aboutFlag(false)
 {
     ui->setupUi(this);
-    setWindowTitle("Планировщик заказов Beta 0.9.6");
+    setWindowTitle("Планировщик заказов Beta 0.9.8");
 
     model = new tableModel(this);
     //model->setRowCount(values.count());
@@ -99,6 +103,10 @@ MainWindow::MainWindow(QWidget *parent)
         );
         msgBox.setIcon(QMessageBox::Information);
         msgBox.exec();
+    });
+
+    ui->tableView->connect(ui->tableView, &QTableView::doubleClicked, [this](){
+        getAbout();
     });
 }
 
@@ -251,6 +259,50 @@ void MainWindow::lastDays()
         else
             ui->tableView->setItemDelegateForRow(i, new CustomDelegateWhite(ui->tableView));
     }
+}
+
+void MainWindow::getAbout()
+{
+    if(aboutFlag == true) return;
+
+    m_about = new QFrame(ui->tableView);
+    m_about->setObjectName("aboutUs");
+
+    //QRect screenGeometry = QScreen::geometry();
+    //int x = (screenGeometry.width()-m_about->width()) / 2;
+    //int y = (screenGeometry.height()-m_about->height()) / 2;
+    //m_about->move(x-150, y-150); //На виртуалке криво отображается, можно по -200 сделать, но тогда на обычной системе может быть криво
+
+QString data = model->index(ui->tableView->currentIndex().row(), 3, ui->tableView->currentIndex()).data().toString();
+
+    m_about->setWindowTitle("Данные о заказе");
+    m_about->setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
+    m_about->setFrameShape(QFrame::Box);
+    m_about->installEventFilter(this);
+
+    m_about->resize(500,300);
+    m_about->setLayout(new QGridLayout(m_about));
+    QLabel *lbl = new QLabel(QString("Информация: %1").arg(data),m_about);
+    lbl->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    m_about->layout()->addWidget(lbl);
+
+    m_about->show();
+    aboutFlag = true;
+}
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if(watched == m_about) {
+        if (event->type() == QEvent::MouseButtonPress) {
+            m_about->setParent(Q_NULLPTR);
+            m_about->close();
+            m_about->removeEventFilter(this);
+            aboutFlag = false;
+            return true;
+        } else
+            return false;
+    }
+    return MainWindow::eventFilter(watched, event);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
