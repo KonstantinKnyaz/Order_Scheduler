@@ -8,9 +8,12 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QJsonValue>
+#include <QFrame>
 
 #include "datamodel.h"
 #include "tablemodel.h"
+#include "customdelegate.h"
 #include "ui_formEdit.h"
 
 QT_BEGIN_NAMESPACE
@@ -32,15 +35,27 @@ public:
 
     void saveToFile();
 
+    bool loadFile();
+
+    void lastDays();
+
+    void getAbout();
+
+    bool eventFilter(QObject *watched, QEvent *event) override;
+
+    void printFile();
+
+    void printPdfFile();
+
 protected:
 
 private:
     Ui::MainWindow *ui;
     tableModel * model;
-    QJsonObject newObj;
     QSortFilterProxyModel *proxyModel;
     void closeEvent(QCloseEvent *event);
-    QList<dataModel> values;
     static const QString fileName;
+    QFrame *m_about;
+    bool aboutFlag;
 };
 #endif // MAINWINDOW_H

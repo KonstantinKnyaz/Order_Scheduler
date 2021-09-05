@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -8,12 +8,14 @@ TEMPLATE = app
 DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
+        customdelegate.cpp \
         datamodel.cpp \
         tablemodel.cpp \
         main.cpp \
         mainwindow.cpp
 
 HEADERS += \
+        customdelegate.h \
         datamodel.h \
         tablemodel.h \
         mainwindow.h
@@ -21,3 +23,6 @@ HEADERS += \
 FORMS += \
         formEdit.ui \
         mainwindow.ui
+
+DISTFILES += \
+    printForm.html
