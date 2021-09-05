@@ -117,6 +117,8 @@
     <property name="title">
      <string>Меню</string>
     </property>
+    <addaction name="pdfBtn"/>
+    <addaction name="printBtn"/>
     <addaction name="info"/>
    </widget>
    <addaction name="menu"/>
@@ -139,6 +141,16 @@
   <action name="action_2">
    <property name="text">
     <string>Загрузить</string>
+   </property>
+  </action>
+  <action name="printBtn">
+   <property name="text">
+    <string>Печать(html)</string>
+   </property>
+  </action>
+  <action name="pdfBtn">
+   <property name="text">
+    <string>Печать(.pdf)</string>
    </property>
   </action>
  </widget>

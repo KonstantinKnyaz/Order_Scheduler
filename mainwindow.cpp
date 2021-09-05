@@ -11,6 +11,10 @@
 #include <QRegularExpressionValidator>
 #include <QApplication>
 #include <QScreen>
+#include <QTextStream>
+#include <QPrinter>
+#include <QTextDocument>
+#include <QFileDialog>
 
 const QString MainWindow::fileName("ordersData.json");
 
@@ -23,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
       aboutFlag(false)
 {
     ui->setupUi(this);
-    setWindowTitle("Планировщик заказов Beta 0.9.8");
+    setWindowTitle("Планировщик заказов Build 1.0.1");
 
     model = new tableModel(this);
     //model->setRowCount(values.count());
@@ -41,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent)
 
             QDate date = QDate::currentDate();
             QDate dateTable = model->index(i, 4, ui->tableView->currentIndex()).data().toDate();
-            quint64 days =  date.daysTo(dateTable);
+            quint64 days = date.daysTo(dateTable);
 
             if (days <= 3) {
             QMessageBox msgBox(
@@ -108,6 +112,14 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableView->connect(ui->tableView, &QTableView::doubleClicked, [this](){
         getAbout();
     });
+
+    ui->printBtn->connect(ui->printBtn, &QAction::triggered, [this](){
+        printFile();
+    });
+
+    ui->pdfBtn->connect(ui->pdfBtn, &QAction::triggered, [this](){
+        printPdfFile();
+    });
 }
 
 MainWindow::~MainWindow()
@@ -116,6 +128,7 @@ MainWindow::~MainWindow()
     this->deleteLater();
     delete model;
     delete proxyModel;
+    m_about->deleteLater();
 }
 
 void MainWindow::addNewOrder()
@@ -200,7 +213,7 @@ void MainWindow::saveToFile()
             qWarning("Couldn't open save file.");
             return;
         }
-
+        QJsonObject m_currentJsonObject;
         QJsonObject textObject;
         for (int i = 0; i < model->values.count(); i++) {
         textObject["name"] = model->index(i,0,ui->tableView->currentIndex()).data().toString();
@@ -242,7 +255,7 @@ bool MainWindow::loadFile()
             model->add(dataModel(name, phone, order, desk, date));
         }
     }
-   // qDebug() << m_currentJsonObject;
+    loadFile.close();
     return true;
 }
 
@@ -267,11 +280,6 @@ void MainWindow::getAbout()
 
     m_about = new QFrame(ui->tableView);
     m_about->setObjectName("aboutUs");
-
-    //QRect screenGeometry = QScreen::geometry();
-    //int x = (screenGeometry.width()-m_about->width()) / 2;
-    //int y = (screenGeometry.height()-m_about->height()) / 2;
-    //m_about->move(x-150, y-150); //На виртуалке криво отображается, можно по -200 сделать, но тогда на обычной системе может быть криво
 
 QString data = model->index(ui->tableView->currentIndex().row(), 3, ui->tableView->currentIndex()).data().toString();
 
@@ -303,6 +311,128 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             return false;
     }
     return MainWindow::eventFilter(watched, event);
+}
+
+void MainWindow::printFile()
+{
+    saveToFile();
+
+    QFile file("printForm.html");
+    if (!file.open(QIODevice::WriteOnly)) {
+        qWarning("Couldn't open save file.");
+        return;
+    }
+
+    QString date = QDate::currentDate().toString(Qt::ISODate);
+
+    QTextStream stream(&file);
+    stream << "<html><head></head><body><center>"+QString("Список заказов на %1").arg(date);
+    stream << "<table border=1><tr>";
+    stream << "<td>"+QString("ФИО")+"</td>";
+    stream << "<td>"+QString("Телефон")+"</td>";
+    stream << "<td>"+QString("Заказ")+"</td>";
+    stream << "<td>"+QString("Описание")+"</td>";
+    stream << "<td>"+QString("Дата")+"</td></tr>";
+
+    QFile loadFile(fileName);
+        if (!loadFile.open(QIODevice::ReadOnly)) {
+            qWarning("Couldn't open save file.");
+            return;
+        }
+
+    QByteArray saveData = loadFile.readAll();
+    QJsonDocument jsnDoc(QJsonDocument::fromJson(saveData));
+    QJsonObject root = jsnDoc.object();
+    QJsonValue jv = root.value("data");
+    if(jv.isArray()) {
+        QJsonArray js = jv.toArray();
+        for(int i = 0; i < js.count(); i++) {
+            QJsonObject subtree = js.at(i).toObject();
+            QString name = subtree.value("name").toString();
+            QString phone = subtree.value("phone").toString();
+            QString order = subtree.value("order").toString();
+            QString desk = subtree.value("desc").toString();
+            QString date = subtree.value("date").toString();
+            stream << "<tr><td>";
+            stream << name;
+            stream << "</td><td>";
+            stream << phone;
+            stream << "</td><td>";
+            stream << order;
+            stream << "</td><td>";
+            stream << desk;
+            stream << "</td><td>";
+            stream << date;
+            stream << "</td></tr>";
+        }
+        stream << "</table></center></body></html>";
+    }
+    loadFile.close();
+    file.close();
+}
+
+void MainWindow::printPdfFile()
+{
+    saveToFile();
+
+    QString str;
+
+    QString date = QDate::currentDate().toString(Qt::ISODate);
+
+    str.append( "<html><head></head><body><center>"+QString("Список заказов на %1").arg(date) );
+    str.append( "<table border=1><tr>");
+    str.append( "<td>"+QString("ФИО")+"</td>");
+    str.append( "<td>"+QString("Телефон")+"</td>" );
+    str.append( "<td>"+QString("Заказ")+"</td>" );
+    str.append( "<td>"+QString("Описание")+"</td>" );
+    str.append( "<td>"+QString("Дата")+"</td></tr>" );
+
+    QFile loadFile(fileName);
+        if (!loadFile.open(QIODevice::ReadOnly)) {
+            qWarning("Couldn't open save file.");
+            return;
+        }
+
+    QByteArray saveData = loadFile.readAll();
+    QJsonDocument jsnDoc(QJsonDocument::fromJson(saveData));
+    QJsonObject root = jsnDoc.object();
+    QJsonValue jv = root.value("data");
+    if(jv.isArray()) {
+        QJsonArray js = jv.toArray();
+        for(int i = 0; i < js.count(); i++) {
+            QJsonObject subtree = js.at(i).toObject();
+            QString name = subtree.value("name").toString();
+            QString phone = subtree.value("phone").toString();
+            QString order = subtree.value("order").toString();
+            QString desk = subtree.value("desc").toString();
+            QString date = subtree.value("date").toString();
+            str.append( "<tr><td>");
+            str.append( name );
+            str.append( "</td><td>");
+            str.append( phone );
+            str.append( "</td><td>" );
+            str.append( order );
+            str.append( "</td><td>");
+            str.append( desk );
+            str.append( "</td><td>" );
+            str.append( date );
+            str.append( "</td></tr>" );
+        }
+        str.append( "</table></center></body></html>" );
+    }
+    loadFile.close();
+
+    QPrinter printer;
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    //printer.setResolution();
+    QString pdfName = QString("Заказы на %1").arg(QDate::currentDate().toString());
+    QString path = QFileDialog::getSaveFileName(NULL, "Сохранить в PDF", pdfName, "PDF(*.pdf)");
+    if(path.isEmpty()) return;
+    printer.setOutputFileName(path);
+
+    QTextDocument doc;
+    doc.setHtml(str);
+    doc.print(&printer);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

@@ -43,6 +43,10 @@ public:
 
     bool eventFilter(QObject *watched, QEvent *event) override;
 
+    void printFile();
+
+    void printPdfFile();
+
 protected:
 
 private:
@@ -51,7 +55,6 @@ private:
     QSortFilterProxyModel *proxyModel;
     void closeEvent(QCloseEvent *event);
     static const QString fileName;
-    QJsonObject m_currentJsonObject;
     QFrame *m_about;
     bool aboutFlag;
 };
