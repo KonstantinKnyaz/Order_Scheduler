@@ -33,7 +33,7 @@ public:
 
     void saveToFile();
 
-    void loadFile();
+    bool loadFile();
 
 protected:
 

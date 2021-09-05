@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
       proxyModel(Q_NULLPTR)
 {
     ui->setupUi(this);
-    setWindowTitle("Планировщик заказов Alpha 0.9.1");
+    setWindowTitle("Планировщик заказов Beta 1.0.0");
 
     model = new tableModel(this);
     //model->setRowCount(values.count());
@@ -31,7 +31,36 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    loadFile();
+    if (loadFile()) {
+
+        QString date = QDate::currentDate().toString(Qt::ISODate);
+
+        for(int i = 0; i < model->values.count(); i++){
+
+            qDebug() << date;
+
+            QString dateTb = model->index(i, 4, ui->tableView->currentIndex()).data().toString();
+
+            QStringList dt = date.split("-");
+            QStringList dtb = dateTb.split("-");
+
+            if (dt.at(1) == dtb.at(1)) {
+                int dateLess = dtb.at(2).toInt() - dt.at(2).toInt();
+                if (dateLess <= 3) {
+                QMessageBox msgBox(
+                    QMessageBox::Information,
+                    QString::fromUtf8("Уведомление"),
+                    QString::fromUtf8("У %1 осталось %2 дня").arg(model->index(i, 0, ui->tableView->currentIndex()).data().toString()).arg(dateLess)
+                );
+                msgBox.setIcon(QMessageBox::Information);
+                msgBox.exec();
+                }
+            }
+
+            qDebug() << dateTb;
+
+        }
+    }
 
     ui->btnAdd->connect(ui->btnAdd, &QPushButton::clicked, [this]() {
        addNewOrder(); 
@@ -71,8 +100,14 @@ MainWindow::MainWindow(QWidget *parent)
         proxyModel->setFilterWildcard(ui->searchEdit->text());
     });
 
-    ui->tableView->connect(ui->tableView, &QTableView::clicked, [=]() {
-        qDebug() << ui->tableView->currentIndex();
+    ui->info->connect(ui->info, &QAction::triggered, [](){
+        QMessageBox msgBox(
+            QMessageBox::Information,
+            QString::fromUtf8("Информация"),
+            QString::fromUtf8("Автор и исполнитель программы \n Константин Князев")
+        );
+        msgBox.setIcon(QMessageBox::Information);
+        msgBox.exec();
     });
 }
 
@@ -177,18 +212,18 @@ void MainWindow::saveToFile()
         saveFile.close();
 }
 
-void MainWindow::loadFile()
+bool MainWindow::loadFile()
 {
     QFile loadFile(fileName);
         if (!loadFile.open(QIODevice::ReadOnly)) {
             qWarning("Couldn't open save file.");
-            return;
+            return false;
         }
 
     QByteArray saveData = loadFile.readAll();
     QJsonDocument jsnDoc(QJsonDocument::fromJson(saveData));
     QJsonObject root = jsnDoc.object();
-    qDebug() << root.keys().at(0);
+    //qDebug() << root.keys().at(0);
     QJsonValue jv = root.value("data");
     if(jv.isArray()) {
         QJsonArray js = jv.toArray();
@@ -203,6 +238,7 @@ void MainWindow::loadFile()
         }
     }
    // qDebug() << m_currentJsonObject;
+    return true;
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

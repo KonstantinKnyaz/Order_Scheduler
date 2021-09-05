@@ -118,7 +118,6 @@
      <string>Меню</string>
     </property>
     <addaction name="info"/>
-    <addaction name="action_3"/>
    </widget>
    <addaction name="menu"/>
   </widget>
