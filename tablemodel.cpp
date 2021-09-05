@@ -1,6 +1,8 @@
 #include "tablemodel.h"
 
 #include <QLocale>
+#include <QBrush>
+#include <QDate>
 
 tableModel::tableModel(QObject *parent)
     :QAbstractTableModel(parent)
@@ -67,7 +69,7 @@ QVariant tableModel::data(const QModelIndex &index, int role) const
     }
         break;
     default:
-        break;
+        return value;
     }
     return value;
 }

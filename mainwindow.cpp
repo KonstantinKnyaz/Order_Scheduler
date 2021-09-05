@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
       proxyModel(Q_NULLPTR)
 {
     ui->setupUi(this);
-    setWindowTitle("Планировщик заказов Beta 1.0.1");
+    setWindowTitle("Планировщик заказов Beta 0.9.6");
 
     model = new tableModel(this);
     //model->setRowCount(values.count());
@@ -33,33 +33,27 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
 
     if (loadFile()) {
-
-        QString date = QDate::currentDate().toString(Qt::ISODate);
-
         for(int i = 0; i < model->values.count(); i++){
 
-            QString dateTb = model->index(i, 4, ui->tableView->currentIndex()).data().toString();
+            QDate date = QDate::currentDate();
+            QDate dateTable = model->index(i, 4, ui->tableView->currentIndex()).data().toDate();
+            quint64 days =  date.daysTo(dateTable);
 
-            QStringList dt = date.split("-");
-            QStringList dtb = dateTb.split("-");
-
-            if (dt.at(1) == dtb.at(1)) {
-                int dateLess = dtb.at(2).toInt() - dt.at(2).toInt();
-                if (dateLess <= 3) {
-                QMessageBox msgBox(
-                    QMessageBox::Information,
-                    QString::fromUtf8("Уведомление"),
-                    QString::fromUtf8("У %1 осталось %2 дня").arg(model->index(i, 0, ui->tableView->currentIndex()).data().toString()).arg(dateLess)
-                );
-                msgBox.setIcon(QMessageBox::Information);
-                msgBox.exec();
-                }
+            if (days <= 3) {
+            QMessageBox msgBox(
+                QMessageBox::Information,
+                QString::fromUtf8("Уведомление"),
+                QString::fromUtf8("У %1 осталось %2 дня").arg(model->index(i, 0, ui->tableView->currentIndex()).data().toString()).arg(days)
+            );
+            msgBox.setIcon(QMessageBox::Information);
+            msgBox.exec();
+            ui->tableView->setItemDelegateForRow(i, new CustomDelegate(ui->tableView));
             }
         }
     }
 
     ui->btnAdd->connect(ui->btnAdd, &QPushButton::clicked, [this]() {
-       addNewOrder(); 
+       addNewOrder();
     });
 
     ui->btnEdit->connect(ui->btnEdit, &QPushButton::clicked, [this]() {
@@ -84,6 +78,7 @@ MainWindow::MainWindow(QWidget *parent)
                     int r = msgBox.exec();
                     if(r == QMessageBox::Yes ){
                         model->remove(ui->tableView->currentIndex());
+                        lastDays();
                     }
     });
 
@@ -135,7 +130,7 @@ void MainWindow::addNewOrder()
         QString date = formUi->dateEdit->text();
 
         model->add(dataModel(name, phone, product, desc, date));
-
+        lastDays();
         form->accept();
     });
 
@@ -177,7 +172,7 @@ void MainWindow::editOrder(const QModelIndex &index)
         QString date = formUi->dateEdit->text();
 
         model->update(index, dataModel(name, phone, product, desc, date));
-
+        lastDays();
         form->accept();
     });
 
@@ -241,6 +236,21 @@ bool MainWindow::loadFile()
     }
    // qDebug() << m_currentJsonObject;
     return true;
+}
+
+void MainWindow::lastDays()
+{
+    for(int i = 0; i < model->values.count(); i++){
+
+        QDate date = QDate::currentDate();
+        QDate dateTable = model->index(i, 4, ui->tableView->currentIndex()).data().toDate();
+        quint64 days =  date.daysTo(dateTable);
+
+        if (days <= 3)
+            ui->tableView->setItemDelegateForRow(i, new CustomDelegate(ui->tableView));
+        else
+            ui->tableView->setItemDelegateForRow(i, new CustomDelegateWhite(ui->tableView));
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

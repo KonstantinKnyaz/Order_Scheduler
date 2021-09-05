@@ -12,6 +12,7 @@
 
 #include "datamodel.h"
 #include "tablemodel.h"
+#include "customdelegate.h"
 #include "ui_formEdit.h"
 
 QT_BEGIN_NAMESPACE
@@ -34,6 +35,8 @@ public:
     void saveToFile();
 
     bool loadFile();
+
+    void lastDays();
 
 protected:
 
