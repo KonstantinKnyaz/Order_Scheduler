@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QApplication>
+#include <QRegularExpressionValidator>
 
 const QString MainWindow::fileName("ordersData.json");
 
@@ -18,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
       proxyModel(Q_NULLPTR)
 {
     ui->setupUi(this);
-    setWindowTitle("Планировщик заказов Beta 1.0.0");
+    setWindowTitle("Планировщик заказов Beta 1.0.1");
 
     model = new tableModel(this);
     //model->setRowCount(values.count());
@@ -37,8 +38,6 @@ MainWindow::MainWindow(QWidget *parent)
 
         for(int i = 0; i < model->values.count(); i++){
 
-            qDebug() << date;
-
             QString dateTb = model->index(i, 4, ui->tableView->currentIndex()).data().toString();
 
             QStringList dt = date.split("-");
@@ -56,9 +55,6 @@ MainWindow::MainWindow(QWidget *parent)
                 msgBox.exec();
                 }
             }
-
-            qDebug() << dateTb;
-
         }
     }
 
@@ -126,6 +122,9 @@ void MainWindow::addNewOrder()
     formUi->setupUi(form);
     form->setWindowTitle("Добавление");
     formUi->dateEdit->setDateTime(QDateTime::currentDateTime());
+    QRegularExpression rx("[0-9+]+");
+    QValidator *validator = new QRegularExpressionValidator(rx, this);
+    formUi->phoneEdit->setValidator(validator);
 
     formUi->editBtn->connect(formUi->editBtn, &QPushButton::clicked, [this, form, formUi]() {
 
@@ -159,6 +158,9 @@ void MainWindow::editOrder(const QModelIndex &index)
     form->setWindowTitle("Редактирование");
     formUi->editBtn->setText("Изменить");
     formUi->dateEdit->setDateTime(QDateTime::currentDateTime());
+    QRegularExpression rx("[0-9+]+");
+    QValidator *validator = new QRegularExpressionValidator(rx, this);
+    formUi->phoneEdit->setValidator(validator);
 
     formUi->nameEdit->setText(model->index(ui->tableView->currentIndex().row(), 0, ui->tableView->currentIndex()).data().toString());
     formUi->phoneEdit->setText(model->index(ui->tableView->currentIndex().row(), 1, ui->tableView->currentIndex()).data().toString());
