@@ -26,3 +26,7 @@ FORMS += \
 
 DISTFILES += \
     printForm.html
+
+RESOURCES +=
+
+win32:RC_FILE = res.rc

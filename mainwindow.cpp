@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
       aboutFlag(false)
 {
     ui->setupUi(this);
-    setWindowTitle("Планировщик заказов Build 1.0.1");
+    setWindowTitle("Планировщик заказов Build 1.0.3");
 
     model = new tableModel(this);
     //model->setRowCount(values.count());

@@ -13,22 +13,79 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow{
+background-color: lightgray;
+color: white;
+}
+QMainWindow::separator {
+    background: yellow;
+    width: 10px; 
+    height: 10px; 
+}
+
+QMainWindow::separator:hover {
+    background: red;
+}
+
+QMenu {
+    background-color: #ABABAB; /* sets background of the menu */
+    border: 1px solid black;
+}
+
+QMenu::item {
+    /* sets background of menu item. set this to something non-transparent
+        if you want menu color and menu item color to be different */
+    background-color: transparent;
+}
+
+QMenu::item:selected { /* when user selects item using mouse or keyboard */
+    background-color: #363534;
+}
+QMenuBar {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 lightgray, stop:1 darkgray);
+    spacing: 3px; /* spacing between menu bar items */
+}
+
+QMenuBar::item {
+    padding: 1px 4px;
+    background: transparent;
+    border-radius: 4px;
+}
+
+QMenuBar::item:selected { /* when selected using mouse or keyboard */
+    background: #a8a8a8;
+}
+
+QMenuBar::item:pressed {
+    background: #888888;
+}
+
+QPushButton {
+    border: 2px solid #8f8f91;
+    border-radius: 6px;
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #f6f7fa, stop: 1 #dadbde);
+    min-width: 80px;
+	height: 20px;
+}
+
+QPushButton:pressed {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #dadbde, stop: 1 #f6f7fa);
+}
+
+QPushButton:flat {
+    border: none; /* no border for a flat push button */
+}
+
+QPushButton:default {
+    border-color: navy; /* make the default button prominent */
+}</string>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QLabel" name="label_5">
-        <property name="text">
-         <string>Поиск</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="searchEdit"/>
-      </item>
-     </layout>
-    </item>
     <item row="0" column="1">
      <widget class="QRadioButton" name="nameRadioBtn">
       <property name="enabled">
@@ -40,6 +97,11 @@
       <property name="acceptDrops">
        <bool>false</bool>
       </property>
+      <property name="styleSheet">
+       <string notr="true">QRadioButton {
+	color:black;
+}</string>
+      </property>
       <property name="text">
        <string>Поиск по имени</string>
       </property>
@@ -48,10 +110,32 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="2">
-     <widget class="QRadioButton" name="phoneRadioBtn">
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label_5">
+        <property name="styleSheet">
+         <string notr="true">QLabel {
+	color: black;
+}</string>
+        </property>
+        <property name="text">
+         <string>Поиск</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="searchEdit"/>
+      </item>
+     </layout>
+    </item>
+    <item row="2" column="2">
+     <widget class="QPushButton" name="btnEdit">
+      <property name="acceptDrops">
+       <bool>false</bool>
+      </property>
       <property name="text">
-       <string>Поиск по телефону</string>
+       <string>Изменить</string>
       </property>
      </widget>
     </item>
@@ -65,20 +149,15 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="2">
-     <widget class="QPushButton" name="btnEdit">
-      <property name="acceptDrops">
-       <bool>false</bool>
+    <item row="0" column="2">
+     <widget class="QRadioButton" name="phoneRadioBtn">
+      <property name="styleSheet">
+       <string notr="true">QRadioButton {
+	color:black;
+}</string>
       </property>
       <property name="text">
-       <string>Изменить</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="2">
-     <widget class="QPushButton" name="btnDel">
-      <property name="text">
-       <string>Удалить</string>
+       <string>Поиск по телефону</string>
       </property>
      </widget>
     </item>
@@ -95,8 +174,29 @@
       </property>
      </spacer>
     </item>
+    <item row="3" column="2">
+     <widget class="QPushButton" name="btnDel">
+      <property name="text">
+       <string>Удалить</string>
+      </property>
+     </widget>
+    </item>
     <item row="1" column="0" rowspan="4" colspan="2">
      <widget class="QTableView" name="tableView">
+      <property name="styleSheet">
+       <string notr="true">QTableView {
+    selection-background-color: darkgray;
+}
+
+QTableView QTableCornerButton::section {
+    background: red;
+    border: 2px outset red;
+}
+
+QTableView::indicator:unchecked {
+    background-color: #d7d6d5
+}</string>
+      </property>
       <property name="sortingEnabled">
        <bool>true</bool>
       </property>
@@ -110,7 +210,7 @@
      <x>0</x>
      <y>0</y>
      <width>1026</width>
-     <height>21</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
