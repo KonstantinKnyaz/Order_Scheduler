@@ -10,14 +10,7 @@ CustomDelegate::CustomDelegate(QObject* parent) : BaseClass(parent)
 
 void CustomDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    if (QAbstractItemView* tableView = qobject_cast<QAbstractItemView*>(this->parent()))
-    {
-        //QModelIndex hover = tableView->indexAt(tableView->viewport()->mapFromGlobal(QCursor::pos()));
-        //if (hover.row() == index.row())
-       // {
-            painter->fillRect(option.rect, Qt::red);
-       // }
-    }
+    painter->fillRect(option.rect, Qt::red);
 
     BaseClass::paint(painter, option, index);
 }

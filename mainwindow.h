@@ -10,6 +10,8 @@
 #include <QJsonDocument>
 #include <QJsonValue>
 #include <QFrame>
+#include <QCloseEvent>
+#include <QSystemTrayIcon>
 
 #include "datamodel.h"
 #include "tablemodel.h"
@@ -26,7 +28,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
     void addNewOrder();
@@ -57,5 +59,7 @@ private:
     static const QString fileName;
     QFrame *m_about;
     bool aboutFlag;
+    QSystemTrayIcon *tray;
+    void iconAct(QSystemTrayIcon::ActivationReason reason);
 };
 #endif // MAINWINDOW_H

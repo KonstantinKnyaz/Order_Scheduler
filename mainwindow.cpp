@@ -6,7 +6,6 @@
 #include <QAbstractItemModel>
 #include <QTableView>
 #include <QMessageBox>
-#include <QCloseEvent>
 #include <QApplication>
 #include <QRegularExpressionValidator>
 #include <QApplication>
@@ -15,6 +14,7 @@
 #include <QPrinter>
 #include <QTextDocument>
 #include <QFileDialog>
+#include <QAction>
 
 const QString MainWindow::fileName("ordersData.json");
 
@@ -24,15 +24,35 @@ MainWindow::MainWindow(QWidget *parent)
       model(Q_NULLPTR),
       proxyModel(Q_NULLPTR),
       m_about(Q_NULLPTR),
-      aboutFlag(false)
+      aboutFlag(false),
+      tray(Q_NULLPTR)
 {
     ui->setupUi(this);
-    setWindowTitle("Планировщик заказов Build 1.0.3");
+    setWindowTitle("Планировщик заказов Build 1.0.4");
 
     model = new tableModel(this);
-    //model->setRowCount(values.count());
     model->setColumnCount(5);
     proxyModel = new QSortFilterProxyModel(this);
+
+    tray = new QSystemTrayIcon(this);
+    tray->setIcon(this->style()->standardIcon(QStyle::SP_ComputerIcon));
+    tray->setToolTip("Сворачивание программы в трей");
+
+    QMenu * menu = new QMenu(this);
+    QAction * viewWindow = new QAction("Развернуть окно",this);
+    QAction * closeWindow = new QAction("Закрыть программу",this);
+
+    menu->addAction(viewWindow);
+    menu->addAction(closeWindow);
+
+    connect(viewWindow, SIGNAL(triggered()), this, SLOT(show()));
+    connect(closeWindow, SIGNAL(triggered()), this, SLOT(close()));
+
+    tray->setContextMenu(menu);
+    tray->show();
+
+    connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+            this, SLOT(iconAct(QSystemTrayIcon::ActivationReason)));
 
     proxyModel->setSourceModel(model);
     ui->tableView->setModel(proxyModel);
@@ -120,6 +140,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->pdfBtn->connect(ui->pdfBtn, &QAction::triggered, [this](){
         printPdfFile();
     });
+
+
+    ui->quit->setShortcut(tr("CTRL+Q"));
+    connect(ui->quit, &QAction::triggered, qApp, QApplication::quit);
 }
 
 MainWindow::~MainWindow()
@@ -437,26 +461,55 @@ void MainWindow::printPdfFile()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    QMessageBox msgBox(
-        QMessageBox::Question,
-        QString::fromUtf8("Завершение работы"),
-        QString::fromUtf8("Выход из приложения"),
-        QMessageBox::Yes | QMessageBox::No
-    );
-    msgBox.setButtonText(QMessageBox::Yes, ("Выйти"));
-    msgBox.setButtonText(QMessageBox::No, ("Отмена"));
-    msgBox.setDefaultButton(QMessageBox::No);
-    msgBox.setIcon(QMessageBox::Question);
-    int r = msgBox.exec();
-    if(r == QMessageBox::No )
-    {
+    if(this->isVisible() && ui->trayAct->isChecked()) {
         event->ignore();
-        return;
-    } else if (r == QMessageBox::Yes) {
-        saveToFile();
-        qApp->processEvents(QEventLoop::AllEvents, 5000);
-        event->accept();
+        this->hide();
+        QSystemTrayIcon::MessageIcon icon = QSystemTrayIcon::MessageIcon(QSystemTrayIcon::Information);
+
+                tray->showMessage("Tray Program",
+                                      QString("Приложение свернуто в трей. Для того чтобы, "
+                                             "развернуть окно приложения, щелкните по иконке приложения в трее"),
+                                      icon,
+                                      2000);
+    } else {
+        QMessageBox msgBox(
+            QMessageBox::Question,
+            QString::fromUtf8("Завершение работы"),
+            QString::fromUtf8("Выход из приложения"),
+            QMessageBox::Yes | QMessageBox::No
+        );
+        msgBox.setButtonText(QMessageBox::Yes, ("Выйти"));
+        msgBox.setButtonText(QMessageBox::No, ("Отмена"));
+        msgBox.setDefaultButton(QMessageBox::No);
+        msgBox.setIcon(QMessageBox::Question);
+        int r = msgBox.exec();
+        if(r == QMessageBox::No )
+        {
+            event->ignore();
+            return;
+        } else if (r == QMessageBox::Yes) {
+            saveToFile();
+            qApp->processEvents(QEventLoop::AllEvents, 5000);
+            event->accept();
+        }
     }
+}
+
+void MainWindow::iconAct(QSystemTrayIcon::ActivationReason reason)
+{
+    switch (reason){
+        case QSystemTrayIcon::Trigger:
+            if(ui->trayAct->isChecked()){
+                if(!this->isVisible()){
+                    this->show();
+                } else {
+                    this->hide();
+                }
+            }
+            break;
+        default:
+            break;
+        }
 }
 
 

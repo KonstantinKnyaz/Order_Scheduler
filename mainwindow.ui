@@ -82,42 +82,24 @@ QPushButton:flat {
 
 QPushButton:default {
     border-color: navy; /* make the default button prominent */
+}
+
+QRadioButton {
+	color:black;
+}
+
+QLabel {
+	color: black;
 }</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="1">
-     <widget class="QRadioButton" name="nameRadioBtn">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="tabletTracking">
-       <bool>false</bool>
-      </property>
-      <property name="acceptDrops">
-       <bool>false</bool>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QRadioButton {
-	color:black;
-}</string>
-      </property>
-      <property name="text">
-       <string>Поиск по имени</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QLabel" name="label_5">
         <property name="styleSheet">
-         <string notr="true">QLabel {
-	color: black;
-}</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>Поиск</string>
@@ -129,16 +111,6 @@ QPushButton:default {
       </item>
      </layout>
     </item>
-    <item row="2" column="2">
-     <widget class="QPushButton" name="btnEdit">
-      <property name="acceptDrops">
-       <bool>false</bool>
-      </property>
-      <property name="text">
-       <string>Изменить</string>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="2">
      <widget class="QPushButton" name="btnAdd">
       <property name="tabletTracking">
@@ -149,12 +121,17 @@ QPushButton:default {
       </property>
      </widget>
     </item>
+    <item row="3" column="2">
+     <widget class="QPushButton" name="btnDel">
+      <property name="text">
+       <string>Удалить</string>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="2">
      <widget class="QRadioButton" name="phoneRadioBtn">
       <property name="styleSheet">
-       <string notr="true">QRadioButton {
-	color:black;
-}</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>Поиск по телефону</string>
@@ -174,10 +151,25 @@ QPushButton:default {
       </property>
      </spacer>
     </item>
-    <item row="3" column="2">
-     <widget class="QPushButton" name="btnDel">
+    <item row="0" column="1">
+     <widget class="QRadioButton" name="nameRadioBtn">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="tabletTracking">
+       <bool>false</bool>
+      </property>
+      <property name="acceptDrops">
+       <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="text">
-       <string>Удалить</string>
+       <string>Поиск по имени</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -202,6 +194,16 @@ QTableView::indicator:unchecked {
       </property>
      </widget>
     </item>
+    <item row="2" column="2">
+     <widget class="QPushButton" name="btnEdit">
+      <property name="acceptDrops">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string>Изменить</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -210,16 +212,31 @@ QTableView::indicator:unchecked {
      <x>0</x>
      <y>0</y>
      <width>1026</width>
-     <height>18</height>
+     <height>17</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
     <property name="title">
      <string>Меню</string>
     </property>
+    <widget class="QMenu" name="theme">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string>Тема</string>
+     </property>
+     <addaction name="ligthAction"/>
+     <addaction name="darkAction"/>
+    </widget>
     <addaction name="pdfBtn"/>
     <addaction name="printBtn"/>
     <addaction name="info"/>
+    <addaction name="separator"/>
+    <addaction name="trayAct"/>
+    <addaction name="theme"/>
+    <addaction name="separator"/>
+    <addaction name="quit"/>
    </widget>
    <addaction name="menu"/>
   </widget>
@@ -251,6 +268,38 @@ QTableView::indicator:unchecked {
   <action name="pdfBtn">
    <property name="text">
     <string>Печать(.pdf)</string>
+   </property>
+  </action>
+  <action name="ligthAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Светлая</string>
+   </property>
+  </action>
+  <action name="darkAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Тёмная</string>
+   </property>
+  </action>
+  <action name="quit">
+   <property name="text">
+    <string>Выход</string>
+   </property>
+  </action>
+  <action name="trayAct">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Сворачивать в трей</string>
    </property>
   </action>
  </widget>
