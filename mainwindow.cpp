@@ -22,7 +22,9 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow),
       model(Q_NULLPTR),
+      modelAll(Q_NULLPTR),
       proxyModel(Q_NULLPTR),
+      proxyMAll(Q_NULLPTR),
       m_about(Q_NULLPTR),
       aboutFlag(false),
       tray(Q_NULLPTR)
@@ -30,9 +32,16 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle("Планировщик заказов Build 1.0.4");
 
+    ui->stackedWidget->setCurrentIndex(0);
+    ui->stackedWidget_2->setCurrentIndex(0);
+
     model = new tableModel(this);
     model->setColumnCount(5);
     proxyModel = new QSortFilterProxyModel(this);
+
+    modelAll = new tableModel(this);
+    modelAll->setColumnCount(5);
+    proxyMAll = new QSortFilterProxyModel(this);
 
     tray = new QSystemTrayIcon(this);
     tray->setIcon(this->style()->standardIcon(QStyle::SP_ComputerIcon));
@@ -59,6 +68,20 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+
+    proxyMAll->setSourceModel(modelAll);
+    ui->tableAll->setModel(proxyMAll);
+    ui->tableAll->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableAll->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableAll->setSelectionMode(QAbstractItemView::SingleSelection);
+
+    ui->comboBox->addItem("Активные заказы");
+    ui->comboBox->addItem("Закрытые заказы");
+
+    ui->comboBox->connect(ui->comboBox,static_cast<void (QComboBox::*)(int)>(&QComboBox::activated),[this] (int index) {
+        ui->stackedWidget->setCurrentIndex(index);
+        ui->stackedWidget_2->setCurrentIndex(index);
+    });
 
     if (loadFile()) {
         for(int i = 0; i < model->values.count(); i++){
@@ -87,7 +110,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->btnEdit->connect(ui->btnEdit, &QPushButton::clicked, [this]() {
         editOrder(ui->tableView->currentIndex());
     });
-
+//Удаление из модели 1 и перенос в модель 2
     ui->btnDel->connect(ui->btnDel, &QPushButton::clicked, [this]() {
         if(!ui->tableView->currentIndex().isValid()) return;
 
@@ -105,11 +128,17 @@ MainWindow::MainWindow(QWidget *parent)
                     msgBox.setIcon(QMessageBox::Question);
                     int r = msgBox.exec();
                     if(r == QMessageBox::Yes ){
+                       QString name = ui->tableView->model()->index(ui->tableView->currentIndex().row(),0, ui->tableView->currentIndex()).data().toString();
+                       QString phone = ui->tableView->model()->index(ui->tableView->currentIndex().row(),1, ui->tableView->currentIndex()).data().toString();
+                       QString order = ui->tableView->model()->index(ui->tableView->currentIndex().row(),2, ui->tableView->currentIndex()).data().toString();
+                       QString desk = ui->tableView->model()->index(ui->tableView->currentIndex().row(),3, ui->tableView->currentIndex()).data().toString();
+                       QString date = ui->tableView->model()->index(ui->tableView->currentIndex().row(),4, ui->tableView->currentIndex()).data().toString();
+                        modelAll->add(dataModel(name, phone, order, desk, date));
                         model->remove(ui->tableView->currentIndex());
                         lastDays();
                     }
     });
-
+//Активные заказы
     ui->searchEdit->connect(ui->searchEdit, &QLineEdit::textChanged, [=]() {
         if (ui->nameRadioBtn->isChecked())
             proxyModel->setFilterKeyColumn(0);
@@ -117,6 +146,15 @@ MainWindow::MainWindow(QWidget *parent)
             proxyModel->setFilterKeyColumn(1);
 
         proxyModel->setFilterWildcard(ui->searchEdit->text());
+    });
+//Закрытые заказы
+    ui->searchEdit_2->connect(ui->searchEdit_2, &QLineEdit::textChanged, [=]() {
+        if (ui->nameRadioBtn->isChecked())
+            proxyMAll->setFilterKeyColumn(0);
+        else if (ui->phoneRadioBtn->isChecked())
+            proxyMAll->setFilterKeyColumn(1);
+
+        proxyMAll->setFilterWildcard(ui->searchEdit->text());
     });
 
     ui->info->connect(ui->info, &QAction::triggered, [](){
@@ -511,5 +549,4 @@ void MainWindow::iconAct(QSystemTrayIcon::ActivationReason reason)
             break;
         }
 }
-
 

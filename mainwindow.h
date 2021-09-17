@@ -54,8 +54,10 @@ protected:
 private:
     Ui::MainWindow *ui;
     tableModel * model;
+    tableModel * modelAll;
     QSortFilterProxyModel *proxyModel;
-    void closeEvent(QCloseEvent *event);
+    QSortFilterProxyModel *proxyMAll;
+    void closeEvent(QCloseEvent *event) override;
     static const QString fileName;
     QFrame *m_about;
     bool aboutFlag;

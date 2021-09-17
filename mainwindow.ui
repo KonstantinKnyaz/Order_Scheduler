@@ -93,63 +93,55 @@ QLabel {
 }</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="gridLayout_4">
     <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QLabel" name="label_5">
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="text">
-         <string>Поиск</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="searchEdit"/>
-      </item>
-     </layout>
-    </item>
-    <item row="1" column="2">
-     <widget class="QPushButton" name="btnAdd">
-      <property name="tabletTracking">
-       <bool>false</bool>
+     <widget class="QStackedWidget" name="stackedWidget_2">
+      <property name="currentIndex">
+       <number>0</number>
       </property>
-      <property name="text">
-       <string>Добавить</string>
-      </property>
+      <widget class="QWidget" name="page_3">
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="label_5">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>Поиск</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="searchEdit"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="page_4">
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label_6">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>Поиск</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="searchEdit_2"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
      </widget>
-    </item>
-    <item row="3" column="2">
-     <widget class="QPushButton" name="btnDel">
-      <property name="text">
-       <string>Удалить</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2">
-     <widget class="QRadioButton" name="phoneRadioBtn">
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="text">
-       <string>Поиск по телефону</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="3">
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>607</height>
-       </size>
-      </property>
-     </spacer>
     </item>
     <item row="0" column="1">
      <widget class="QRadioButton" name="nameRadioBtn">
@@ -173,10 +165,27 @@ QLabel {
       </property>
      </widget>
     </item>
-    <item row="1" column="0" rowspan="4" colspan="2">
-     <widget class="QTableView" name="tableView">
+    <item row="0" column="2">
+     <widget class="QRadioButton" name="phoneRadioBtn">
       <property name="styleSheet">
-       <string notr="true">QTableView {
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>Поиск по телефону</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" rowspan="5">
+     <widget class="QStackedWidget" name="stackedWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="page">
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QTableView" name="tableView">
+          <property name="styleSheet">
+           <string notr="true">QTableView {
     selection-background-color: darkgray;
 }
 
@@ -188,9 +197,30 @@ QTableView QTableCornerButton::section {
 QTableView::indicator:unchecked {
     background-color: #d7d6d5
 }</string>
+          </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="page_2">
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="QTableView" name="tableAll"/>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QPushButton" name="btnAdd">
+      <property name="tabletTracking">
+       <bool>false</bool>
       </property>
-      <property name="sortingEnabled">
-       <bool>true</bool>
+      <property name="text">
+       <string>Добавить</string>
       </property>
      </widget>
     </item>
@@ -204,6 +234,29 @@ QTableView::indicator:unchecked {
       </property>
      </widget>
     </item>
+    <item row="3" column="2">
+     <widget class="QPushButton" name="btnDel">
+      <property name="text">
+       <string>Удалить</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="3">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>607</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="4" column="1" colspan="2">
+     <widget class="QComboBox" name="comboBox"/>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -212,7 +265,7 @@ QTableView::indicator:unchecked {
      <x>0</x>
      <y>0</y>
      <width>1026</width>
-     <height>17</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
