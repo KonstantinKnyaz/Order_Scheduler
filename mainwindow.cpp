@@ -122,6 +122,8 @@ void MainWindow::mainActions()
                 QString::fromUtf8("У %1 осталось %2 дня").arg(model->index(i, 0, ui->tableView->currentIndex()).data().toString()).arg(days)
             );
             msgBox.setIcon(QMessageBox::Information);
+//            msgBox.setStyleSheet(QString("QMessageBox {background-color: #353535; color: white;}"
+//"QLable {color: white;}"));
             msgBox.exec();
             }
         }
@@ -578,7 +580,7 @@ void MainWindow::darkTheme()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if(!this->isHidden() && ui->trayAct->isChecked()) {
+    if(this->isVisible() && ui->trayAct->isChecked()) {
         event->ignore();
         this->hide();
         QSystemTrayIcon::MessageIcon icon = QSystemTrayIcon::MessageIcon(QSystemTrayIcon::Information);
