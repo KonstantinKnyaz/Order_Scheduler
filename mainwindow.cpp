@@ -55,6 +55,7 @@ void MainWindow::mainActions()
 
     modelAll = new tableModel(this);
     modelAll->setColumnCount(5);
+    modelAll->setDefaultRowColor(true);
     proxyMAll = new QSortFilterProxyModel(this);
 
     tray = new QSystemTrayIcon(this);
@@ -95,6 +96,15 @@ void MainWindow::mainActions()
     ui->comboBox->connect(ui->comboBox,static_cast<void (QComboBox::*)(int)>(&QComboBox::activated),[this] (int index) {
         ui->stackedWidget->setCurrentIndex(index);
         ui->stackedWidget_2->setCurrentIndex(index);
+        if(index != 0) {
+            ui->btnAdd->setEnabled(false);
+            ui->btnEdit->setEnabled(false);
+            ui->btnDel->setEnabled(false);
+        } else {
+            ui->btnAdd->setEnabled(true);
+            ui->btnEdit->setEnabled(true);
+            ui->btnDel->setEnabled(true);
+        }
     });
 
     loadFile();
@@ -114,8 +124,8 @@ void MainWindow::mainActions()
 
         QMessageBox msgBox(
                                 QMessageBox::Question,
-                                QString::fromUtf8("Удаление"),
-                                QString::fromUtf8("Удалить %1?").arg(data),
+                                QString::fromUtf8("Закрыть заказ"),
+                                QString::fromUtf8("Закрыть %1?").arg(data),
                                 QMessageBox::Yes | QMessageBox::No
                                 );
                     QApplication::setApplicationDisplayName(msgBox.windowTitle());

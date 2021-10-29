@@ -40,27 +40,32 @@ void tableModel::setColumnCount(const int &column)
 QVariant tableModel::data(const QModelIndex &idx, int role) const
 {
     QVariant value;
+    if(!defCol) {
+        if(role == Qt::BackgroundColorRole) {
+            QDate date = QDate::currentDate();
+            if(!date.isValid()) return value;
+            QDate tableData = index(idx.row(), 4, idx).data().toDate();
+            quint64 days =  date.daysTo(tableData);
+            if(days < 1)
+                return QVariant(QColor(255,0,0,255));
+            else if (days < 3)
+                return QVariant(QColor(255,217,0,255));
+            else
+                return QVariant(QColor(255,255,255,255));
+        }
 
-    if(role == Qt::BackgroundColorRole) {
-        QDate date = QDate::currentDate();
-        if(!date.isValid()) return value;
-        QDate tableData = index(idx.row(), 4, idx).data().toDate();
-        quint64 days =  date.daysTo(tableData);
-        if(days < 3){
-            return QVariant(QColor(255,0,0,255));
-        } else
-            return QVariant(QColor(255,255,255,255));
-    }
-
-    if(role == Qt::ForegroundRole) {
-        QDate date = QDate::currentDate();
-        if(!date.isValid()) return value;
-        QDate tableData = index(idx.row(), 4, idx).data().toDate();
-        quint64 days =  date.daysTo(tableData);
-        if(days < 3){
-            return QVariant(QColor(255,255,255,255));
-        } else
-            return QVariant(QColor(0,0,0,255));
+        if(role == Qt::ForegroundRole) {
+            QDate date = QDate::currentDate();
+            if(!date.isValid()) return value;
+            QDate tableData = index(idx.row(), 4, idx).data().toDate();
+            quint64 days =  date.daysTo(tableData);
+            if(days < 1)
+                return QVariant(QColor(255,255,255,255));
+            else if(days < 3)
+                return QVariant(QColor(47,47,47,255));
+            else
+                return QVariant(QColor(0,0,0,255));
+        }
     }
 
     switch (role) {
@@ -134,5 +139,10 @@ void tableModel::remove(const QModelIndex &index)
 {
     this->beginRemoveRows(QModelIndex(), index.row(), index.row());
         values.removeAt(index.row());
-    this->endRemoveRows();
+        this->endRemoveRows();
+}
+
+void tableModel::setDefaultRowColor(const bool &def)
+{
+    defCol = def;
 }

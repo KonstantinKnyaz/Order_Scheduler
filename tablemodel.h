@@ -25,11 +25,13 @@ public:
     void add(dataModel value);
     void update(const QModelIndex &index, dataModel value);
     void remove(const QModelIndex &index);
+    void setDefaultRowColor(const bool &def);
     QList<dataModel> values;
     
 private:
     int m_row = 0;
     int m_column = 0;
+    bool defCol = false;
 };
 
 
