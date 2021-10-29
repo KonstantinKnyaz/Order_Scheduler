@@ -34,7 +34,21 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->stackedWidget->setCurrentIndex(0);
     ui->stackedWidget_2->setCurrentIndex(0);
+    mainActions();
 
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+    this->deleteLater();
+    delete model;
+    delete proxyModel;
+    m_about->deleteLater();
+}
+
+void MainWindow::mainActions()
+{
     model = new tableModel(this);
     model->setColumnCount(5);
     proxyModel = new QSortFilterProxyModel(this);
@@ -83,25 +97,7 @@ MainWindow::MainWindow(QWidget *parent)
         ui->stackedWidget_2->setCurrentIndex(index);
     });
 
-    if (loadFile()) {
-        for(int i = 0; i < model->values.count(); i++){
-
-            QDate date = QDate::currentDate();
-            QDate dateTable = model->index(i, 4, ui->tableView->currentIndex()).data().toDate();
-            quint64 days = date.daysTo(dateTable);
-
-            if (days <= 3) {
-            QMessageBox msgBox(
-                QMessageBox::Information,
-                QString::fromUtf8("Уведомление"),
-                QString::fromUtf8("У %1 осталось %2 дня").arg(model->index(i, 0, ui->tableView->currentIndex()).data().toString()).arg(days)
-            );
-            msgBox.setIcon(QMessageBox::Information);
-            msgBox.exec();
-            ui->tableView->setItemDelegateForRow(i, new CustomDelegate(ui->tableView));
-            }
-        }
-    }
+    loadFile();
 
     ui->btnAdd->connect(ui->btnAdd, &QPushButton::clicked, [this]() {
        addNewOrder();
@@ -135,11 +131,10 @@ MainWindow::MainWindow(QWidget *parent)
                        QString date = ui->tableView->model()->index(ui->tableView->currentIndex().row(),4, ui->tableView->currentIndex()).data().toString();
                         modelAll->add(dataModel(name, phone, order, desk, date));
                         model->remove(ui->tableView->currentIndex());
-                        lastDays();
                     }
     });
 //Активные заказы
-    ui->searchEdit->connect(ui->searchEdit, &QLineEdit::textChanged, [=]() {
+    ui->searchEdit->connect(ui->searchEdit, &QLineEdit::textChanged, [this]() {
         if (ui->nameRadioBtn->isChecked())
             proxyModel->setFilterKeyColumn(0);
         else if (ui->phoneRadioBtn->isChecked())
@@ -148,7 +143,7 @@ MainWindow::MainWindow(QWidget *parent)
         proxyModel->setFilterWildcard(ui->searchEdit->text());
     });
 //Закрытые заказы
-    ui->searchEdit_2->connect(ui->searchEdit_2, &QLineEdit::textChanged, [=]() {
+    ui->searchEdit_2->connect(ui->searchEdit_2, &QLineEdit::textChanged, [this]() {
         if (ui->nameRadioBtn->isChecked())
             proxyMAll->setFilterKeyColumn(0);
         else if (ui->phoneRadioBtn->isChecked())
@@ -157,7 +152,7 @@ MainWindow::MainWindow(QWidget *parent)
         proxyMAll->setFilterWildcard(ui->searchEdit->text());
     });
 
-    ui->info->connect(ui->info, &QAction::triggered, [](){
+    ui->info->connect(ui->info, &QAction::triggered, [=](){
         QMessageBox msgBox(
             QMessageBox::Information,
             QString::fromUtf8("Информация"),
@@ -184,15 +179,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->quit, &QAction::triggered, qApp, QApplication::quit);
 }
 
-MainWindow::~MainWindow()
-{
-    delete ui;
-    this->deleteLater();
-    delete model;
-    delete proxyModel;
-    m_about->deleteLater();
-}
-
 void MainWindow::addNewOrder()
 {
     Ui::formEdit* formUi = new Ui::formEdit;
@@ -213,7 +199,6 @@ void MainWindow::addNewOrder()
         QString date = formUi->dateEdit->text();
 
         model->add(dataModel(name, phone, product, desc, date));
-        lastDays();
         form->accept();
     });
 
@@ -255,7 +240,6 @@ void MainWindow::editOrder(const QModelIndex &index)
         QString date = formUi->dateEdit->text();
 
         model->update(index, dataModel(name, phone, product, desc, date));
-        lastDays();
         form->accept();
     });
 
@@ -319,21 +303,6 @@ bool MainWindow::loadFile()
     }
     loadFile.close();
     return true;
-}
-
-void MainWindow::lastDays()
-{
-    for(int i = 0; i < model->values.count(); i++){
-
-        QDate date = QDate::currentDate();
-        QDate dateTable = model->index(i, 4, ui->tableView->currentIndex()).data().toDate();
-        quint64 days =  date.daysTo(dateTable);
-
-        if (days <= 3)
-            ui->tableView->setItemDelegateForRow(i, new CustomDelegate(ui->tableView));
-        else
-            ui->tableView->setItemDelegateForRow(i, new CustomDelegateWhite(ui->tableView));
-    }
 }
 
 void MainWindow::getAbout()

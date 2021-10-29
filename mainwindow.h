@@ -15,7 +15,6 @@
 
 #include "datamodel.h"
 #include "tablemodel.h"
-#include "customdelegate.h"
 #include "ui_formEdit.h"
 
 QT_BEGIN_NAMESPACE
@@ -31,6 +30,8 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void mainActions();
+
     void addNewOrder();
 
     void editOrder(const QModelIndex &index);
@@ -38,8 +39,6 @@ public:
     void saveToFile();
 
     bool loadFile();
-
-    void lastDays();
 
     void getAbout();
 

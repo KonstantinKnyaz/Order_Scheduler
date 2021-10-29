@@ -37,32 +37,54 @@ void tableModel::setColumnCount(const int &column)
     m_column = column;
 }
 
-QVariant tableModel::data(const QModelIndex &index, int role) const
+QVariant tableModel::data(const QModelIndex &idx, int role) const
 {
     QVariant value;
+
+    if(role == Qt::BackgroundColorRole) {
+        QDate date = QDate::currentDate();
+        if(!date.isValid()) return value;
+        QDate tableData = index(idx.row(), 4, idx).data().toDate();
+        quint64 days =  date.daysTo(tableData);
+        if(days < 3){
+            return QVariant(QColor(255,0,0,255));
+        } else
+            return QVariant(QColor(255,255,255,255));
+    }
+
+    if(role == Qt::ForegroundRole) {
+        QDate date = QDate::currentDate();
+        if(!date.isValid()) return value;
+        QDate tableData = index(idx.row(), 4, idx).data().toDate();
+        quint64 days =  date.daysTo(tableData);
+        if(days < 3){
+            return QVariant(QColor(255,255,255,255));
+        } else
+            return QVariant(QColor(0,0,0,255));
+    }
 
     switch (role) {
     case Qt::DisplayRole:
     {
-        switch (index.column()) {
+        switch (idx.column()) {
             case 0: {
-                value = this->values.at(index.row()).getName();
+                value = this->values.at(idx.row()).getName();
                 break;
             }
             case 1: {
-                value = this->values.at(index.row()).getPhone();
+                value = this->values.at(idx.row()).getPhone();
                 break;
             }
             case 2: {
-                value = this->values.at(index.row()).getOrder();
+                value = this->values.at(idx.row()).getOrder();
                 break;
             }
             case 3: {
-                value = this->values.at(index.row()).getDesc();
+                value = this->values.at(idx.row()).getDesc();
                 break;
             }
             case 4: {
-                value = this->values.at(index.row()).getDate();
+                value = this->values.at(idx.row()).getDate();
                 break;
             }
         }

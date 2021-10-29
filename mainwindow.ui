@@ -175,45 +175,6 @@ QLabel {
       </property>
      </widget>
     </item>
-    <item row="1" column="0" rowspan="5">
-     <widget class="QStackedWidget" name="stackedWidget">
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <widget class="QWidget" name="page">
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="QTableView" name="tableView">
-          <property name="styleSheet">
-           <string notr="true">QTableView {
-    selection-background-color: darkgray;
-}
-
-QTableView QTableCornerButton::section {
-    background: red;
-    border: 2px outset red;
-}
-
-QTableView::indicator:unchecked {
-    background-color: #d7d6d5
-}</string>
-          </property>
-          <property name="sortingEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="page_2">
-       <layout class="QGridLayout" name="gridLayout_3">
-        <item row="0" column="0">
-         <widget class="QTableView" name="tableAll"/>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-    </item>
     <item row="1" column="2">
      <widget class="QPushButton" name="btnAdd">
       <property name="tabletTracking">
@@ -254,8 +215,47 @@ QTableView::indicator:unchecked {
       </property>
      </spacer>
     </item>
-    <item row="4" column="1" colspan="2">
+    <item row="4" column="2">
      <widget class="QComboBox" name="comboBox"/>
+    </item>
+    <item row="1" column="0" rowspan="5" colspan="2">
+     <widget class="QStackedWidget" name="stackedWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="page">
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QTableView" name="tableView">
+          <property name="styleSheet">
+           <string notr="true">QTableView {
+    selection-background-color: darkgray;
+}
+
+QTableView QTableCornerButton::section {
+    background: red;
+    border: 2px outset red;
+}
+
+QTableView::indicator:unchecked {
+    background-color: #d7d6d5
+}</string>
+          </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="page_2">
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="QTableView" name="tableAll"/>
+        </item>
+       </layout>
+      </widget>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -265,7 +265,7 @@ QTableView::indicator:unchecked {
      <x>0</x>
      <y>0</y>
      <width>1026</width>
-     <height>18</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
