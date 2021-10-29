@@ -13,8 +13,8 @@ int main(int argc, char *argv[])
     a.setOrganizationDomain("vk.com/id15631385");
     a.setOrganizationName("Konstantin Knyazev");
 
-    MainWindow w;
-    w.show();
+    MainWindow *w =  new MainWindow(Q_NULLPTR);
+    w->show();
 
     return a.exec();
 }

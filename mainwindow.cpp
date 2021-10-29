@@ -15,6 +15,7 @@
 #include <QTextDocument>
 #include <QFileDialog>
 #include <QAction>
+#include <QTimer>
 
 const QString MainWindow::fileName("ordersData.json");
 const QString MainWindow::closeFileName("closeData.json");
@@ -41,11 +42,9 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    setParent(Q_NULLPTR);
     delete ui;
-    this->deleteLater();
-    delete model;
-    delete proxyModel;
-    m_about->deleteLater();
+    deleteLater();
 }
 
 void MainWindow::mainActions()
@@ -611,7 +610,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
             saveToClose();
             qApp->processEvents(QEventLoop::AllEvents, 5000);
             event->accept();
+
         }
+    }
+    if(this->close()){
+
+        QTimer::singleShot(100, qApp, [=]{qApp->exit();});
     }
 }
 
