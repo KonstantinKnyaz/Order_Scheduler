@@ -52,6 +52,8 @@ public:
 
     void printPdfFile();
 
+    void darkTheme();
+
 protected:
 
 private:

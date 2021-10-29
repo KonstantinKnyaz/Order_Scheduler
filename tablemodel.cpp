@@ -51,7 +51,7 @@ QVariant tableModel::data(const QModelIndex &idx, int role) const
             else if (days < 3)
                 return QVariant(QColor(255,217,0,255));
             else
-                return QVariant(QColor(255,255,255,255));
+                return QVariant(QColor(39,39,39,255));
         }
 
         if(role == Qt::ForegroundRole) {
@@ -64,7 +64,7 @@ QVariant tableModel::data(const QModelIndex &idx, int role) const
             else if(days < 3)
                 return QVariant(QColor(47,47,47,255));
             else
-                return QVariant(QColor(0,0,0,255));
+                return QVariant(QColor(255,255,255,255));
         }
     }
 
@@ -117,6 +117,15 @@ QVariant tableModel::headerData(int section, Qt::Orientation orientation, int ro
                 return QString("Дата");
         }
     }
+
+    if(role == Qt::BackgroundColorRole && orientation == Qt::Horizontal) {
+        return QVariant(QColor(39, 39, 39, 255));
+    }
+
+    if(role == Qt::ForegroundRole && orientation == Qt::Horizontal) {
+        return QVariant(QColor(255, 255, 255, 255));
+    }
+
     return QVariant();
 }
 
