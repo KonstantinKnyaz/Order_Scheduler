@@ -13,21 +13,110 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow{
+background-color: #353535; color: white;
+}
+QMainWindow::separator {background: yellow; width: 10px;  height: 10px;}
+
+QMainWindow::separator:hover {
+    background: red;
+}
+
+QMenu {background-color: #353535; border: 1px solid white; color: white;}
+
+QMenu::item {background-color: #353535;}
+
+QMenu::item:selected {background-color: #a4a4a4;}
+
+QMenuBar {background-color: #353535; color: white;}
+
+QMenuBar::item {padding: 1px 4px; background: transparent; border-radius: 4px;}
+
+QMenuBar::item:selected {background: #a8a8a8;}
+
+QMenuBar::item:pressed {background: #888888;}
+
+QPushButton {border: 2px solid #272727; border-radius: 4px; background-color: #4f4f4f; color: white; min-width: 80px; height: 30px;}
+
+QPushButton:pressed {color: white; background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,stop: 0 #2b2b2b, stop: 1 #505050);}
+
+QPushButton:flat {border: none;}
+
+QPushButton:default {border-color: navy;}
+
+QRadioButton {color:white;}
+
+QLabel {color: white;}
+
+QLineEdit {color: white; background-color: #4f4f4f; border: 1px solid #4f4f4f; border-radius: 4px;}
+
+QComboBox {color: white; background-color: #4f4f4f;}
+
+QComboBox:editable {background: white;}
+
+QComboBox:on {padding-top: 3px;padding-left: 4px;}
+
+QComboBox::drop-down {subcontrol-origin: padding; subcontrol-position: top right;width: 15px;border-left-width: 1px;border-left-color: darkgray; border-left-style: solid; border-top-right-radius: 3px; border-bottom-right-radius: 3px;}
+ 
+QComboBox::down-arrow:on {top: 1px; left: 1px;}
+
+QTableView {background-color: #353535;}
+
+QFrame {background-color: #353535; color: white}
+
+QMessageBox {background-color: #353535; color: white}</string>
+  </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="gridLayout_4">
     <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QLabel" name="label_5">
-        <property name="text">
-         <string>Поиск</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="searchEdit"/>
-      </item>
-     </layout>
+     <widget class="QStackedWidget" name="stackedWidget_2">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="page_3">
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="label_5">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>Поиск</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="searchEdit"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="page_4">
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label_6">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>Поиск</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="searchEdit_2"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </widget>
     </item>
     <item row="0" column="1">
      <widget class="QRadioButton" name="nameRadioBtn">
@@ -40,6 +129,9 @@
       <property name="acceptDrops">
        <bool>false</bool>
       </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="text">
        <string>Поиск по имени</string>
       </property>
@@ -50,6 +142,9 @@
     </item>
     <item row="0" column="2">
      <widget class="QRadioButton" name="phoneRadioBtn">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="text">
        <string>Поиск по телефону</string>
       </property>
@@ -78,11 +173,11 @@
     <item row="3" column="2">
      <widget class="QPushButton" name="btnDel">
       <property name="text">
-       <string>Удалить</string>
+       <string>Закрыть</string>
       </property>
      </widget>
     </item>
-    <item row="4" column="3">
+    <item row="5" column="3">
      <spacer name="verticalSpacer">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
@@ -95,11 +190,46 @@
       </property>
      </spacer>
     </item>
-    <item row="1" column="0" rowspan="4" colspan="2">
-     <widget class="QTableView" name="tableView">
-      <property name="sortingEnabled">
-       <bool>true</bool>
+    <item row="4" column="2">
+     <widget class="QComboBox" name="comboBox"/>
+    </item>
+    <item row="1" column="0" rowspan="5" colspan="2">
+     <widget class="QStackedWidget" name="stackedWidget">
+      <property name="currentIndex">
+       <number>0</number>
       </property>
+      <widget class="QWidget" name="page">
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QTableView" name="tableView">
+          <property name="styleSheet">
+           <string notr="true">QTableView {
+    selection-background-color: darkgray;
+}
+
+QTableView QTableCornerButton::section {
+    background: red;
+    border: 2px outset red;
+}
+
+QTableView::indicator:unchecked {
+    background-color: #d7d6d5
+}</string>
+          </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="page_2">
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="QTableView" name="tableAll"/>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -110,16 +240,31 @@
      <x>0</x>
      <y>0</y>
      <width>1026</width>
-     <height>21</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
     <property name="title">
      <string>Меню</string>
     </property>
+    <widget class="QMenu" name="theme">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string>Тема</string>
+     </property>
+     <addaction name="ligthAction"/>
+     <addaction name="darkAction"/>
+    </widget>
     <addaction name="pdfBtn"/>
     <addaction name="printBtn"/>
     <addaction name="info"/>
+    <addaction name="separator"/>
+    <addaction name="trayAct"/>
+    <addaction name="theme"/>
+    <addaction name="separator"/>
+    <addaction name="quit"/>
    </widget>
    <addaction name="menu"/>
   </widget>
@@ -151,6 +296,38 @@
   <action name="pdfBtn">
    <property name="text">
     <string>Печать(.pdf)</string>
+   </property>
+  </action>
+  <action name="ligthAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Светлая</string>
+   </property>
+  </action>
+  <action name="darkAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Тёмная</string>
+   </property>
+  </action>
+  <action name="quit">
+   <property name="text">
+    <string>Выход</string>
+   </property>
+  </action>
+  <action name="trayAct">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Сворачивать в трей</string>
    </property>
   </action>
  </widget>

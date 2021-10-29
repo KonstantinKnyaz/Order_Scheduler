@@ -10,10 +10,11 @@
 #include <QJsonDocument>
 #include <QJsonValue>
 #include <QFrame>
+#include <QCloseEvent>
+#include <QSystemTrayIcon>
 
 #include "datamodel.h"
 #include "tablemodel.h"
-#include "customdelegate.h"
 #include "ui_formEdit.h"
 
 QT_BEGIN_NAMESPACE
@@ -26,8 +27,10 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    void mainActions();
 
     void addNewOrder();
 
@@ -37,7 +40,9 @@ public:
 
     bool loadFile();
 
-    void lastDays();
+    void saveToClose();
+
+    void loadClose();
 
     void getAbout();
 
@@ -47,15 +52,22 @@ public:
 
     void printPdfFile();
 
+    void darkTheme();
+
 protected:
 
 private:
     Ui::MainWindow *ui;
     tableModel * model;
+    tableModel * modelAll;
     QSortFilterProxyModel *proxyModel;
-    void closeEvent(QCloseEvent *event);
+    QSortFilterProxyModel *proxyMAll;
+    void closeEvent(QCloseEvent *event) override;
     static const QString fileName;
+    static const QString closeFileName;
     QFrame *m_about;
     bool aboutFlag;
+    QSystemTrayIcon *tray;
+    void iconAct(QSystemTrayIcon::ActivationReason reason);
 };
 #endif // MAINWINDOW_H

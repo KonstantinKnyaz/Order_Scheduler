@@ -20,16 +20,18 @@ public:
     void setRowCount(const int &row);
     int columnCount(const QModelIndex &parent) const;
     void setColumnCount(const int &column);
-    QVariant data(const QModelIndex &index, int role) const;
+    QVariant data(const QModelIndex &idx, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     void add(dataModel value);
     void update(const QModelIndex &index, dataModel value);
     void remove(const QModelIndex &index);
+    void setDefaultRowColor(const bool &def);
     QList<dataModel> values;
     
 private:
     int m_row = 0;
     int m_column = 0;
+    bool defCol = false;
 };
 
 
