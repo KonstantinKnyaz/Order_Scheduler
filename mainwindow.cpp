@@ -15,6 +15,7 @@
 #include <QTextDocument>
 #include <QFileDialog>
 #include <QAction>
+#include <QTimer>
 
 const QString MainWindow::fileName("ordersData.json");
 const QString MainWindow::closeFileName("closeData.json");
@@ -41,11 +42,9 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    setParent(Q_NULLPTR);
     delete ui;
-    this->deleteLater();
-    delete model;
-    delete proxyModel;
-    m_about->deleteLater();
+    deleteLater();
 }
 
 void MainWindow::mainActions()
@@ -122,6 +121,8 @@ void MainWindow::mainActions()
                 QString::fromUtf8("У %1 осталось %2 дня").arg(model->index(i, 0, ui->tableView->currentIndex()).data().toString()).arg(days)
             );
             msgBox.setIcon(QMessageBox::Information);
+//            msgBox.setStyleSheet(QString("QMessageBox {background-color: #353535; color: white;}"
+//"QLable {color: white;}"));
             msgBox.exec();
             }
         }
@@ -578,7 +579,7 @@ void MainWindow::darkTheme()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if(!this->isHidden() && ui->trayAct->isChecked()) {
+    if(this->isVisible() && ui->trayAct->isChecked()) {
         event->ignore();
         this->hide();
         QSystemTrayIcon::MessageIcon icon = QSystemTrayIcon::MessageIcon(QSystemTrayIcon::Information);
@@ -609,6 +610,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
             saveToClose();
             qApp->processEvents(QEventLoop::AllEvents, 5000);
             event->accept();
+
+            if(this->close()){
+
+                QTimer::singleShot(100, qApp, [=]{qApp->exit();});
+            }
+
         }
     }
 }
