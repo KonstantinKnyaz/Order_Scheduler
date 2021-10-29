@@ -108,7 +108,25 @@ void MainWindow::mainActions()
         }
     });
 
-    loadFile();
+    if (loadFile()) {
+        for(int i = 0; i < model->values.count(); i++){
+
+            QDate date = QDate::currentDate();
+            QDate dateTable = model->index(i, 4, ui->tableView->currentIndex()).data().toDate();
+            quint64 days = date.daysTo(dateTable);
+
+            if (days <= 3) {
+            QMessageBox msgBox(
+                QMessageBox::Information,
+                QString::fromUtf8("Уведомление"),
+                QString::fromUtf8("У %1 осталось %2 дня").arg(model->index(i, 0, ui->tableView->currentIndex()).data().toString()).arg(days)
+            );
+            msgBox.setIcon(QMessageBox::Information);
+            msgBox.exec();
+            }
+        }
+    }
+
     loadClose();
 
     ui->btnAdd->connect(ui->btnAdd, &QPushButton::clicked, [this]() {
