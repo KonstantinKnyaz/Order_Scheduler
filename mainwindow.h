@@ -40,6 +40,10 @@ public:
 
     bool loadFile();
 
+    void saveToClose();
+
+    void loadClose();
+
     void getAbout();
 
     bool eventFilter(QObject *watched, QEvent *event) override;
@@ -58,6 +62,7 @@ private:
     QSortFilterProxyModel *proxyMAll;
     void closeEvent(QCloseEvent *event) override;
     static const QString fileName;
+    static const QString closeFileName;
     QFrame *m_about;
     bool aboutFlag;
     QSystemTrayIcon *tray;

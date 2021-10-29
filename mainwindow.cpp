@@ -17,6 +17,7 @@
 #include <QAction>
 
 const QString MainWindow::fileName("ordersData.json");
+const QString MainWindow::closeFileName("closeData.json");
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -108,6 +109,7 @@ void MainWindow::mainActions()
     });
 
     loadFile();
+    loadClose();
 
     ui->btnAdd->connect(ui->btnAdd, &QPushButton::clicked, [this]() {
        addNewOrder();
@@ -186,7 +188,7 @@ void MainWindow::mainActions()
 
 
     ui->quit->setShortcut(tr("CTRL+Q"));
-    connect(ui->quit, &QAction::triggered, qApp, QApplication::quit);
+    connect(ui->quit, &QAction::triggered, qApp, QApplication::closeAllWindows);
 }
 
 void MainWindow::addNewOrder()
@@ -313,6 +315,58 @@ bool MainWindow::loadFile()
     }
     loadFile.close();
     return true;
+}
+
+void MainWindow::saveToClose()
+{
+    QFile saveFile(closeFileName);
+        if (!saveFile.open(QIODevice::WriteOnly)) {
+            qWarning("Couldn't open save file.");
+            return;
+        }
+        QJsonObject m_currentJsonObject;
+        QJsonObject textObject;
+        for (int i = 0; i < modelAll->values.count(); i++) {
+        textObject["name"] = modelAll->index(i,0,ui->tableView->currentIndex()).data().toString();
+        textObject["phone"] = modelAll->index(i,1,ui->tableView->currentIndex()).data().toString();
+        textObject["order"] = modelAll->index(i,2,ui->tableView->currentIndex()).data().toString();
+        textObject["desc"] = modelAll->index(i,3,ui->tableView->currentIndex()).data().toString();
+        textObject["date"] = modelAll->index(i,4,ui->tableView->currentIndex()).data().toString();
+        QJsonArray textsArray = m_currentJsonObject["data"].toArray();
+        textsArray.append(textObject);
+        m_currentJsonObject["data"] = textsArray;
+        }
+
+        saveFile.write(QJsonDocument(m_currentJsonObject).toJson(QJsonDocument::Indented));
+        saveFile.close();
+}
+
+void MainWindow::loadClose()
+{
+    QFile loadCLoseFile(closeFileName);
+        if (!loadCLoseFile.open(QIODevice::ReadOnly)) {
+            qWarning("Couldn't open save file.");
+            return;
+        }
+
+    QByteArray saveData = loadCLoseFile.readAll();
+    QJsonDocument jsnDoc(QJsonDocument::fromJson(saveData));
+    QJsonObject root = jsnDoc.object();
+    //qDebug() << root.keys().at(0);
+    QJsonValue jv = root.value("data");
+    if(jv.isArray()) {
+        QJsonArray js = jv.toArray();
+        for(int i = 0; i < js.count(); i++) {
+            QJsonObject subtree = js.at(i).toObject();
+            QString name = subtree.value("name").toString();
+            QString phone = subtree.value("phone").toString();
+            QString order = subtree.value("order").toString();
+            QString desk = subtree.value("desc").toString();
+            QString date = subtree.value("date").toString();
+            modelAll->add(dataModel(name, phone, order, desk, date));
+        }
+    }
+    loadCLoseFile.close();
 }
 
 void MainWindow::getAbout()
@@ -506,6 +560,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
             return;
         } else if (r == QMessageBox::Yes) {
             saveToFile();
+            saveToClose();
             qApp->processEvents(QEventLoop::AllEvents, 5000);
             event->accept();
         }
