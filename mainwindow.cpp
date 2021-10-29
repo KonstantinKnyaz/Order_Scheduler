@@ -611,11 +611,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
             qApp->processEvents(QEventLoop::AllEvents, 5000);
             event->accept();
 
-        }
-    }
-    if(this->close()){
+            if(this->close()){
 
-        QTimer::singleShot(100, qApp, [=]{qApp->exit();});
+                QTimer::singleShot(100, qApp, [=]{qApp->exit();});
+            }
+
+        }
     }
 }
 
