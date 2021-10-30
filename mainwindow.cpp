@@ -180,7 +180,7 @@ void MainWindow::mainActions()
         else if (ui->phoneRadioBtn->isChecked())
             proxyMAll->setFilterKeyColumn(1);
 
-        proxyMAll->setFilterWildcard(ui->searchEdit->text());
+        proxyMAll->setFilterWildcard(ui->searchEdit_2->text());
     });
 
     ui->info->connect(ui->info, &QAction::triggered, [=](){
