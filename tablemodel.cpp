@@ -41,7 +41,7 @@ QVariant tableModel::data(const QModelIndex &idx, int role) const
 {
     QVariant value;
     if(!defCol) {
-        if(role == Qt::BackgroundColorRole) {
+        if(role == Qt::BackgroundRole) {
             QDate date = QDate::currentDate();
             if(!date.isValid()) return value;
             QDate tableData = index(idx.row(), 4, idx).data().toDate();
@@ -118,9 +118,9 @@ QVariant tableModel::headerData(int section, Qt::Orientation orientation, int ro
         }
     }
 
-    if(role == Qt::BackgroundColorRole && orientation == Qt::Horizontal) {
-        return QVariant(QColor(39, 39, 39, 255));
-    }
+//    if(role == Qt::BackgroundRole && orientation == Qt::Horizontal) {
+//        return QVariant(QColor(39, 39, 39, 255));
+//    }
 
     if(role == Qt::ForegroundRole && orientation == Qt::Horizontal) {
         return QVariant(QColor(255, 255, 255, 255));
