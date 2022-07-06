@@ -1,4 +1,5 @@
 #include "tablemodel.h"
+#include <QDebug>
 
 #include <QLocale>
 #include <QBrush>
@@ -7,7 +8,7 @@
 tableModel::tableModel(QObject *parent)
     :QAbstractTableModel(parent)
 {
-
+    values = new QList<dataModel>();
 }
 
 tableModel::~tableModel()
@@ -18,7 +19,7 @@ tableModel::~tableModel()
 int tableModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    return values.count();
+    return values->count();
 }
 
 void tableModel::setRowCount(const int &row)
@@ -73,23 +74,23 @@ QVariant tableModel::data(const QModelIndex &idx, int role) const
     {
         switch (idx.column()) {
             case 0: {
-                value = this->values.at(idx.row()).getName();
+                value = this->values->at(idx.row()).getName();
                 break;
             }
             case 1: {
-                value = this->values.at(idx.row()).getPhone();
+                value = this->values->at(idx.row()).getPhone();
                 break;
             }
             case 2: {
-                value = this->values.at(idx.row()).getOrder();
+                value = this->values->at(idx.row()).getOrder();
                 break;
             }
             case 3: {
-                value = this->values.at(idx.row()).getDesc();
+                value = this->values->at(idx.row()).getDesc();
                 break;
             }
             case 4: {
-                value = this->values.at(idx.row()).getDate();
+                value = this->values->at(idx.row()).getDate();
                 break;
             }
         }
@@ -131,24 +132,25 @@ QVariant tableModel::headerData(int section, Qt::Orientation orientation, int ro
 
 void tableModel::add(dataModel value)
 {
-    int newRow = this->values.count();
+    int newRow = this->values->count();
 
     this->beginInsertRows(QModelIndex(), newRow, newRow);
-        values.append(value);
+        values->append(value);
     endInsertRows();
 }
 
 void tableModel::update(const QModelIndex &index, dataModel value)
 {
-    values[index.row()] = value;
+    values->removeAt(index.row());
+    values->insert(index.row(), value);
     emit this->dataChanged(index, index);
 }
 
 void tableModel::remove(const QModelIndex &index)
 {
     this->beginRemoveRows(QModelIndex(), index.row(), index.row());
-        values.removeAt(index.row());
-        this->endRemoveRows();
+    values->removeAt(index.row());
+    this->endRemoveRows();
 }
 
 void tableModel::setDefaultRowColor(const bool &def)

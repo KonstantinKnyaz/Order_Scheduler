@@ -22,7 +22,7 @@ public:
     void update(const QModelIndex &index, dataModel value);
     void remove(const QModelIndex &index);
     void setDefaultRowColor(const bool &def);
-    QList<dataModel> values;
+    QList<dataModel> *values = Q_NULLPTR;
     
 private:
     int m_row = 0;

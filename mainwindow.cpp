@@ -108,7 +108,7 @@ void MainWindow::mainActions()
     });
 
     if (loadFile()) {
-        for(int i = 0; i < model->values.count(); i++){
+        for(int i = 0; i < model->values->count(); i++){
 
             QDate date = QDate::currentDate();
             QDate dateTable = model->index(i, 4, ui->tableView->currentIndex()).data().toDate();
@@ -295,7 +295,7 @@ void MainWindow::saveToFile()
         }
         QJsonObject m_currentJsonObject;
         QJsonObject textObject;
-        for (int i = 0; i < model->values.count(); i++) {
+        for (int i = 0; i < model->values->count(); i++) {
         textObject["name"] = model->index(i,0,ui->tableView->currentIndex()).data().toString();
         textObject["phone"] = model->index(i,1,ui->tableView->currentIndex()).data().toString();
         textObject["order"] = model->index(i,2,ui->tableView->currentIndex()).data().toString();
@@ -348,7 +348,7 @@ void MainWindow::saveToClose()
         }
         QJsonObject m_currentJsonObject;
         QJsonObject textObject;
-        for (int i = 0; i < modelAll->values.count(); i++) {
+        for (int i = 0; i < modelAll->values->count(); i++) {
         textObject["name"] = modelAll->index(i,0,ui->tableView->currentIndex()).data().toString();
         textObject["phone"] = modelAll->index(i,1,ui->tableView->currentIndex()).data().toString();
         textObject["order"] = modelAll->index(i,2,ui->tableView->currentIndex()).data().toString();
