@@ -108,7 +108,7 @@ void MainWindow::mainActions()
     });
 
     if (loadFile()) {
-        for(int i = 0; i < model->values.count(); i++){
+        for(int i = 0; i < model->values->count(); i++){
 
             QDate date = QDate::currentDate();
             QDate dateTable = model->index(i, 4, ui->tableView->currentIndex()).data().toDate();
@@ -180,7 +180,7 @@ void MainWindow::mainActions()
         else if (ui->phoneRadioBtn->isChecked())
             proxyMAll->setFilterKeyColumn(1);
 
-        proxyMAll->setFilterWildcard(ui->searchEdit->text());
+        proxyMAll->setFilterWildcard(ui->searchEdit_2->text());
     });
 
     ui->info->connect(ui->info, &QAction::triggered, [=](){
@@ -290,12 +290,12 @@ void MainWindow::saveToFile()
 {
     QFile saveFile(fileName);
         if (!saveFile.open(QIODevice::WriteOnly)) {
-            qWarning("Couldn't open save file.");
+            qWarning("Не удаётся сохранить файл!");
             return;
         }
         QJsonObject m_currentJsonObject;
         QJsonObject textObject;
-        for (int i = 0; i < model->values.count(); i++) {
+        for (int i = 0; i < model->values->count(); i++) {
         textObject["name"] = model->index(i,0,ui->tableView->currentIndex()).data().toString();
         textObject["phone"] = model->index(i,1,ui->tableView->currentIndex()).data().toString();
         textObject["order"] = model->index(i,2,ui->tableView->currentIndex()).data().toString();
@@ -348,7 +348,7 @@ void MainWindow::saveToClose()
         }
         QJsonObject m_currentJsonObject;
         QJsonObject textObject;
-        for (int i = 0; i < modelAll->values.count(); i++) {
+        for (int i = 0; i < modelAll->values->count(); i++) {
         textObject["name"] = modelAll->index(i,0,ui->tableView->currentIndex()).data().toString();
         textObject["phone"] = modelAll->index(i,1,ui->tableView->currentIndex()).data().toString();
         textObject["order"] = modelAll->index(i,2,ui->tableView->currentIndex()).data().toString();
@@ -398,7 +398,7 @@ void MainWindow::getAbout()
     m_about = new QFrame(ui->tableView);
     m_about->setObjectName("aboutUs");
 
-QString data = model->index(ui->tableView->currentIndex().row(), 3, ui->tableView->currentIndex()).data().toString();
+    QString data = model->index(ui->tableView->currentIndex().row(), 3, ui->tableView->currentIndex()).data().toString();
 
     m_about->setWindowTitle("Данные о заказе");
     m_about->setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
@@ -552,72 +552,37 @@ void MainWindow::printPdfFile()
     doc.print(&printer);
 }
 
-void MainWindow::darkTheme()
-{
-    setStyleSheet(QString("QMainWindow {background-color: #353535; color: white;}"
-"QMainWindow::separator {background: yellow; width: 10px;  height: 10px;}"
-"QMenu {background-color: #353535; border: 1px solid white; color: white;}"
-"QMenu::item {background-color: transparent;}"
-"QMenu::item:selected {background-color: #a4a4a4;}"
-"QMenuBar {background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #353535, stop:1 darkgray); spacing: 3px;}"
-"QMenuBar::item {padding: 1px 4px; background: transparent; border-radius: 4px;}"
-"QMenuBar::item:selected {background: #a8a8a8;}"
-"QMenuBar::item:pressed {background: #888888;}"
-"QPushButton {border: 2px solid #272727; border-radius: 4px; background-color: #4f4f4f; color: white; min-width: 80px; height: 30px;}"
-"QPushButton:pressed {color: white; background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,stop: 0 #2b2b2b, stop: 1 #505050);}"
-"QPushButton:flat {border: none;}"
-"QPushButton:default {border-color: navy;}"
-"QRadioButton {color:white;}"
-"QLabel {color: white;}"
-"QLineEdit {color: white; background-color: #4f4f4f; border: 1px solid #4f4f4f; border-radius: 4px;}"
-"QComboBox {color: white; background-color: #4f4f4f;}"
-"QComboBox:editable {background: white;}"
-"QComboBox:on {padding-top: 3px;padding-left: 4px;}"
-"QComboBox::drop-down {subcontrol-origin: padding; subcontrol-position: top right;width: 15px; border-left-width: 1px; border-left-color: darkgray; border-left-style: solid; border-top-right-radius: 3px; border-bottom-right-radius: 3px;}"
-"QComboBox::down-arrow:on {top: 1px; left: 1px;}"));
-}
-
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if(this->isVisible() && ui->trayAct->isChecked()) {
+
+    QMessageBox msgBox(
+        QMessageBox::Question,
+        QString::fromUtf8("Завершение работы"),
+        QString::fromUtf8("Выход из приложения"),
+        QMessageBox::Yes | QMessageBox::No
+    );
+    msgBox.setButtonText(QMessageBox::Yes, ("Выйти"));
+    msgBox.setButtonText(QMessageBox::No, ("Отмена"));
+    msgBox.setDefaultButton(QMessageBox::No);
+    msgBox.setIcon(QMessageBox::Question);
+    int r = msgBox.exec();
+    if(r == QMessageBox::No )
+    {
         event->ignore();
-        this->hide();
-        QSystemTrayIcon::MessageIcon icon = QSystemTrayIcon::MessageIcon(QSystemTrayIcon::Information);
+        return;
+    } else if (r == QMessageBox::Yes) {
+        saveToFile();
+        saveToClose();
+        qApp->processEvents(QEventLoop::AllEvents, 5000);
+        event->accept();
 
-                tray->showMessage("Tray Program",
-                                      QString("Приложение свернуто в трей. Для того чтобы, "
-                                             "развернуть окно приложения, щелкните по иконке приложения в трее"),
-                                      icon,
-                                      2000);
-    } else {
-        QMessageBox msgBox(
-            QMessageBox::Question,
-            QString::fromUtf8("Завершение работы"),
-            QString::fromUtf8("Выход из приложения"),
-            QMessageBox::Yes | QMessageBox::No
-        );
-        msgBox.setButtonText(QMessageBox::Yes, ("Выйти"));
-        msgBox.setButtonText(QMessageBox::No, ("Отмена"));
-        msgBox.setDefaultButton(QMessageBox::No);
-        msgBox.setIcon(QMessageBox::Question);
-        int r = msgBox.exec();
-        if(r == QMessageBox::No )
-        {
-            event->ignore();
-            return;
-        } else if (r == QMessageBox::Yes) {
-            saveToFile();
-            saveToClose();
-            qApp->processEvents(QEventLoop::AllEvents, 5000);
-            event->accept();
+        if(this->close()){
 
-            if(this->close()){
-
-                QTimer::singleShot(100, qApp, [=]{qApp->exit();});
-            }
-
+            QTimer::singleShot(100, qApp, [=]{qApp->exit();});
         }
+
     }
+
 }
 
 void MainWindow::iconAct(QSystemTrayIcon::ActivationReason reason)

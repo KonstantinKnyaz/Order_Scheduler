@@ -1,4 +1,5 @@
 #include "tablemodel.h"
+#include <QDebug>
 
 #include <QLocale>
 #include <QBrush>
@@ -18,7 +19,7 @@ tableModel::~tableModel()
 int tableModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    return values.count();
+    return values->count();
 }
 
 void tableModel::setRowCount(const int &row)
@@ -41,7 +42,7 @@ QVariant tableModel::data(const QModelIndex &idx, int role) const
 {
     QVariant value;
     if(!defCol) {
-        if(role == Qt::BackgroundColorRole) {
+        if(role == Qt::BackgroundRole) {
             QDate date = QDate::currentDate();
             if(!date.isValid()) return value;
             QDate tableData = index(idx.row(), 4, idx).data().toDate();
@@ -118,9 +119,9 @@ QVariant tableModel::headerData(int section, Qt::Orientation orientation, int ro
         }
     }
 
-    if(role == Qt::BackgroundColorRole && orientation == Qt::Horizontal) {
-        return QVariant(QColor(39, 39, 39, 255));
-    }
+//    if(role == Qt::BackgroundRole && orientation == Qt::Horizontal) {
+//        return QVariant(QColor(39, 39, 39, 255));
+//    }
 
     if(role == Qt::ForegroundRole && orientation == Qt::Horizontal) {
         return QVariant(QColor(255, 255, 255, 255));
@@ -140,15 +141,15 @@ void tableModel::add(dataModel value)
 
 void tableModel::update(const QModelIndex &index, dataModel value)
 {
-    values[index.row()] = value;
+    values[index.row()] = values;
     emit this->dataChanged(index, index);
 }
 
 void tableModel::remove(const QModelIndex &index)
 {
     this->beginRemoveRows(QModelIndex(), index.row(), index.row());
-        values.removeAt(index.row());
-        this->endRemoveRows();
+    values.removeAt(index.row());
+    this->endRemoveRows();
 }
 
 void tableModel::setDefaultRowColor(const bool &def)

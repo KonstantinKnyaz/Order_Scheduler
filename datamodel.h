@@ -24,11 +24,11 @@ public:
     QString getDate() const;
 
 private:
-    QString name;
-    QString phone;
-    QString order;
-    QString desc;
-    QString date;
+    QString _name;
+    QString _phone;
+    QString _order;
+    QString _desc;
+    QString _date;
 };
 
 #endif // DATAMODEL_H
